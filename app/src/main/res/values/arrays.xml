@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="sl_colors">
+        <item name="green">@color/green</item>
+        <item name="blue">@color/blue</item>
+        <item name="yellow">@color/yellow</item>
+        <item name="orange">@color/orange</item>
+        <item name="purple">@color/purple</item>
+    </array>
+</resources>

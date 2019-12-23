@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chip
+    style="@style/Widget.MaterialComponents.Chip.Filter"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:checkable="true"
+    app:chipBackgroundColor="@color/chip_color_state"
+    app:iconStartPadding="5dp"/>

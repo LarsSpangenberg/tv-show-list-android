@@ -1,0 +1,31 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.showtracker.views.MainActivity">
+    <item
+        android:id="@+id/main_menu_sort"
+        android:title="@string/sort_menu_title">
+        <menu>
+            <item
+                android:id="@+id/main_menu_sort_by_name"
+                android:title="@string/sort_menu_by_name" />
+            <item
+                android:id="@+id/main_menu_sort_by_custom"
+                android:title="@string/sort_menu_sort_by_custom" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/main_menu_delete_selection"
+        android:icon="@drawable/ic_delete_black_24dp"
+        android:title="@string/main_menu_delete_selection"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/main_menu_rename_list"
+        android:icon="@drawable/ic_mode_edit_white_24dp"
+        android:title="@string/main_menu_rename_list"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/main_menu_tag_list"
+        android:title="@string/menu_tag_list"
+        app:showAsAction="never" />
+</menu>

@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Show Tracker</string>
+    <string name="action_settings">Settings</string>
+    <string name="lists_edit_list_dropdown_content_description">edit list</string>
+    <string name="title_activity_shows_list">Shows List</string>
+    <string name="sli_season">S. %d</string>
+    <string name="sli_episode">Ep. %d</string>
+    <string name="shows_list_menu_delete">Delete Selection</string>
+    <string name="addlist_list_name_hint">List Name</string>
+    <string name="addlist_save_button_create">Create New List</string>
+    <string name="addlist_save_button_edit">Save Changes</string>
+    <string name="main_menu_delete_selection">Delete Selection</string>
+    <string name="main_menu_rename_list">Rename List</string>
+    <string name="title_activity_show_detail">Edit Show</string>
+    <string name="sd_title_hint">Title</string>
+    <string name="sd_season_label">Season</string>
+    <string name="sd_episode_label">Episode</string>
+    <string name="sd_status_label">Status</string>
+    <string name="sd_comment_label">Comment</string>
+    <string name="sd_tags_label">Tags</string>
+    <string name="sd_lists_label">Lists</string>
+    <string name="sd_episode_increment">increment episode</string>
+    <string name="sd_episode_decrement">decrement episode</string>
+    <string name="sd_season_increment">increment season</string>
+    <string name="sd_season_decrement">decrement season</string>
+    <string name="sd_status_prompt">Status</string>
+    <string name="sd_no_tags_message">You haven\'t created any tags yet</string>
+    <string name="sd_default_number_value">1</string>
+    <string name="title_activity_tag">Tag Activity</string>
+    <string name="menu_tag_list">Edit Tags</string>
+    <string name="tag_list_menu_delete">Delete Selection</string>
+    <string name="addtag_name_hint">Tag Name</string>
+    <string name="addtag_save_button_create">Create New Tag</string>
+    <string name="addedit_save_button_edit">Save Changes</string>
+    <string name="sort_menu_title">Sort By</string>
+    <string name="filter_tag_menu_title">Filter By Tag</string>
+    <string name="filter_status_menu_title">Filter By Status</string>
+    <string name="sort_menu_by_name">Name</string>
+    <string name="sort_menu_sort_by_custom">Custom</string>
+    <string name="status_current">Currently Watching</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_watch_later">Watch Later</string>
+    <string name="status_on_hold">On Hold</string>
+    <string name="status_dropped">Dropped</string>
+    <string name="sl_no_results_message">List is empty.\n\nEither there are no shows in this
+        list,
+        in which case you can tap on the (+) button to add a new show to this list, or the filter
+        criteria you have set does not match any shows in this list.</string>
+    <string name="lists_no_results_message">No lists were found.\n\nYou can add new lists
+        by clicking the (+) button.\n\nThen, by tapping on the list, you can add or remove any show
+        you would like to keep track of.
+    </string>
+    <string name="tags_no_results_message">No tags were found.\n\nYou can add tags by
+        tapping on the (+) button.\n\nEach show will have a tag section, where you can edit
+        which tags a show will be associated with. Once you have set tags for some shows,
+        you can filter your lists to display shows only associated with those tags for an
+        easier way to navigate through the list.</string>
+    <string-array name="status_options">
+        <item>Currently Watching</item>
+        <item>Completed</item>
+        <item>Watch Later</item>
+        <item>On Hold</item>
+        <item>Dropped</item>
+    </string-array>
+</resources>

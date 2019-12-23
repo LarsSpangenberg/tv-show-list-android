@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light"
+    android:fadeScrollbars="true"
+    android:isScrollContainer="true"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:scrollbarStyle="insideInset"
+    android:scrollbars="vertical"
+    android:verticalScrollbarPosition="defaultPosition"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_show_detail">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:isScrollContainer="true"
+        android:padding="8dp"
+        android:scrollbars="vertical"
+        android:theme="@style/AppTheme">
+
+        <EditText
+            android:id="@+id/sd_season_input"
+            android:layout_width="80sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLines="1"
+            android:scrollHorizontally="false"
+            android:singleLine="true"
+            android:text="@string/sd_default_number_value"
+            android:textAlignment="gravity"
+            app:layout_constraintEnd_toStartOf="@+id/sd_season_increment"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="3" />
+
+        <EditText
+            android:id="@+id/sd_episode_input"
+            android:layout_width="80sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/sd_default_number_value"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toStartOf="@+id/sd_episode_increment"
+            app:layout_constraintTop_toBottomOf="@+id/sd_season_input"
+            tools:text="23" />
+
+        <ImageButton
+            android:id="@+id/sd_season_decrement"
+            android:layout_width="48dp"
+            android:layout_height="0dp"
+            android:background="@drawable/button_round"
+            android:contentDescription="@string/sd_season_decrement"
+            app:layout_constraintBottom_toBottomOf="@+id/sd_season_input"
+            app:layout_constraintEnd_toStartOf="@+id/sd_season_input"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/sd_season_label"
+            app:layout_constraintTop_toTopOf="@+id/sd_season_input"
+            app:srcCompat="@drawable/ic_decrement_black_24dp" />
+
+        <ImageButton
+            android:id="@+id/sd_episode_increment"
+            android:layout_width="48dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_round"
+            android:contentDescription="@string/sd_episode_increment"
+            app:layout_constraintBottom_toBottomOf="@+id/sd_episode_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/sd_episode_input"
+            app:srcCompat="@drawable/ic_increment_black_24dp" />
+
+        <ImageButton
+            android:id="@+id/sd_season_increment"
+            android:layout_width="48dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_round"
+            android:contentDescription="@string/sd_season_increment"
+            app:layout_constraintBottom_toBottomOf="@+id/sd_season_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/sd_season_input"
+            app:srcCompat="@drawable/ic_increment_black_24dp" />
+
+        <ImageButton
+            android:id="@+id/sd_episode_decrement"
+            android:layout_width="48dp"
+            android:layout_height="0dp"
+            android:background="@drawable/button_round"
+            android:contentDescription="@string/sd_episode_increment"
+            app:layout_constraintBottom_toBottomOf="@+id/sd_episode_input"
+            app:layout_constraintEnd_toStartOf="@+id/sd_episode_input"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/sd_episode_label"
+            app:layout_constraintTop_toTopOf="@+id/sd_episode_input"
+            app:srcCompat="@drawable/ic_decrement_black_24dp" />
+
+        <TextView
+            android:id="@+id/sd_episode_label"
+            style="@style/Widget.AppCompat.TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/sd_episode_label"
+            android:textSize="18sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/sd_episode_input"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/sd_season_label"
+            style="@style/Widget.AppCompat.TextView"
+            android:layout_width="66dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/sd_season_label"
+            android:textSize="18sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/sd_season_input"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <TextView
+            android:id="@+id/sd_lists_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="60dp"
+            android:labelFor="@id/sd_lists_chipgroup"
+            android:text="@string/sd_lists_label"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sd_comment_input_layout" />
+
+        <TextView
+            android:id="@+id/sd_tags_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:labelFor="@id/sd_tags_chipgroup"
+            android:text="@string/sd_tags_label"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sd_lists_chipgroup" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/sd_tags_chipgroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sd_tags_label" />
+
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/sd_lists_chipgroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:clipChildren="true"
+            android:clipToPadding="true"
+            android:foregroundGravity="fill_horizontal"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sd_lists_label" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/sd_comment_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sd_episode_input">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/sd_comment_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/sd_comment_label"
+                android:inputType="textImeMultiLine"
+                tools:text="blah blah blah" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
