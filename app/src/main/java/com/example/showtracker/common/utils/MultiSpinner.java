@@ -1,4 +1,4 @@
-package com.example.showtracker.utils;
+package com.example.showtracker.common.utils;
 
 import android.content.*;
 import android.util.*;

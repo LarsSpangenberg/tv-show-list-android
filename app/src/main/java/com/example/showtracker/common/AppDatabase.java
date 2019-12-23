@@ -1,4 +1,4 @@
-package com.example.showtracker.data;
+package com.example.showtracker.common;
 
 import android.content.*;
 import android.os.*;
@@ -10,7 +10,7 @@ import androidx.sqlite.db.*;
 
 import com.example.showtracker.data.dao.*;
 import com.example.showtracker.data.entities.*;
-import com.example.showtracker.utils.*;
+import com.example.showtracker.common.utils.*;
 
 @Database(
     entities = {
@@ -32,8 +32,7 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room
-                        .databaseBuilder(
+                    INSTANCE = Room.databaseBuilder(
                             context.getApplicationContext(),
                             AppDatabase.class,
                             DB_NAME

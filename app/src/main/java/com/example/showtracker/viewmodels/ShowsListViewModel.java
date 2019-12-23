@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer;
 
 import com.example.showtracker.data.*;
 import com.example.showtracker.data.entities.*;
-import com.example.showtracker.utils.*;
+import com.example.showtracker.common.utils.*;
 
 import java.util.*;
 
