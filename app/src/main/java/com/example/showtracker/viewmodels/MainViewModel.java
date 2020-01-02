@@ -1,22 +1,19 @@
 package com.example.showtracker.viewmodels;
 
-import android.app.*;
-
 import androidx.lifecycle.*;
 
+import com.example.showtracker.*;
 import com.example.showtracker.data.*;
 import com.example.showtracker.data.entities.*;
 
 import java.util.*;
 
-public class MainViewModel extends AndroidViewModel {
+public class MainViewModel extends ViewModel {
     private ListsRepository listsRepository;
     private LiveData<List<ListWithShows>> listsWithShows;
 
-    public MainViewModel(Application application) {
-        super(application);
-
-        this.listsRepository = ListsRepository.getInstance(application);
+    public MainViewModel(MyApplication application) {
+        this.listsRepository = application.getApplicationComponent().getListsRepository();
         this.listsWithShows = this.listsRepository.getAllListsWithShowId();
     }
 

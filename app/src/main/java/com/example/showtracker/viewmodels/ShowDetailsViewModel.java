@@ -1,33 +1,34 @@
 package com.example.showtracker.viewmodels;
 
-import android.app.*;
-
 import androidx.annotation.*;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.*;
 
+import com.example.showtracker.*;
+import com.example.showtracker.common.dependencyinjection.application.*;
 import com.example.showtracker.data.*;
 import com.example.showtracker.data.entities.*;
 
 import java.util.*;
 
-public class ShowDetailsViewModel extends AndroidViewModel {
+public class ShowDetailsViewModel extends ViewModel {
     private ShowsRepository showsRepository;
-    private ListsRepository listsRepository;
-    private TagsRepository tagsRepository;
     private LiveData<List<ListOfShows>> allLists;
     private LiveData<List<Tag>> allTags;
     private LiveData<ShowDetails> showDetails;
     private MediatorLiveData<ShowDetailsData> showDetailsComplete;
 
-    public ShowDetailsViewModel(@NonNull Application application, String showId) {
-        super(application);
-        this.showsRepository = ShowsRepository.getInstance(application);
-        this.listsRepository = ListsRepository.getInstance(application);
-        this.tagsRepository = TagsRepository.getInstance(application);
-        this.showDetails = this.showsRepository.getShowDetails(showId);
-        this.allLists = this.listsRepository.getAllEditableLists();
-        this.allTags = this.tagsRepository.getAll();
+    public ShowDetailsViewModel(
+        @NonNull MyApplication application,
+        String showId
+    ) {
+        ApplicationComponent appComponent = application.getApplicationComponent();
+
+        showsRepository = appComponent.getShowsRepository();
+        showDetails = showsRepository.getShowDetails(showId);
+
+        allLists = appComponent.getListsRepository().getAllEditableLists();
+        allTags = appComponent.getTagsRepository().getAll();
 
         setDetailsLiveData(showId);
     }

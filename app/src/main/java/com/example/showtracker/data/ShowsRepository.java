@@ -1,38 +1,23 @@
 package com.example.showtracker.data;
 
-import android.app.*;
 import android.os.*;
 
 import androidx.annotation.*;
 import androidx.lifecycle.*;
 
-import com.example.showtracker.common.*;
+import com.example.showtracker.common.utils.*;
 import com.example.showtracker.data.dao.*;
 import com.example.showtracker.data.entities.*;
-import com.example.showtracker.common.utils.*;
 
 import java.util.*;
 
 public class ShowsRepository {
     private static final String TAG = "ShowsRepository";
-    private static volatile ShowsRepository INSTANCE;
     private ShowDao showDao;
 
-    private ShowsRepository(@NonNull Application application) {
-        AppDatabase db = AppDatabase.getInstance(application);
+    public ShowsRepository(@NonNull AppDatabase db) {
         this.showDao = db.showDao();
 
-    }
-
-    public static ShowsRepository getInstance(Application application) {
-        if (INSTANCE == null) {
-            synchronized (ShowsRepository.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new ShowsRepository(application);
-                }
-            }
-        }
-        return INSTANCE;
     }
 
     public LiveData<List<ShowWithTags>> getShowsInList(String listId, ShowsListFilters filters) {

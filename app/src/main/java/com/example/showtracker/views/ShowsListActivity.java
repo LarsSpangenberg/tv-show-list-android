@@ -34,7 +34,7 @@ public class ShowsListActivity extends BaseListActivity
 
     private ShowsListViewModel viewModel;
     private ListOfShows currentList;
-    private List<Tag> allTags;
+    private List<Tag> allTags = new ArrayList<>();
 
     private ShowRVAdapter adapter;
     private ShowsListFilters filters;
@@ -46,9 +46,8 @@ public class ShowsListActivity extends BaseListActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         RecyclerView recyclerView = findViewById(R.id.shows_list);
-        this.allTags = new ArrayList<>();
-        this.adapter = new ShowRVAdapter(this, this);
-        this.filters = new ShowsListFilters();
+        adapter = new ShowRVAdapter(this, this);
+        filters = new ShowsListFilters();
 
         ItemTouchHelper.Callback callback = new ItemMoveCallback(this.adapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
@@ -58,13 +57,11 @@ public class ShowsListActivity extends BaseListActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         Intent intent = getIntent();
-        this.currentList =
-            (ListOfShows) intent.getSerializableExtra(ListOfShows.class.getSimpleName());
-        ViewModelWithIdFactory factory = new ViewModelWithIdFactory(
-            getApplication(),
-            this.currentList.id
-        );
-        this.viewModel = ViewModelProviders.of(this, factory).get(ShowsListViewModel.class);
+        currentList = (ListOfShows) intent.getSerializableExtra(ListOfShows.class.getSimpleName());
+
+        ViewModelWithIdFactory factory = getPresentationComponent().getViewModelWithIdFactory();
+        factory.setId(currentList.getId());
+        viewModel = ViewModelProviders.of(this, factory).get(ShowsListViewModel.class);
 
         toolbar.setTitle(this.currentList.toString());
         setSupportActionBar(toolbar);

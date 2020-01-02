@@ -1,16 +1,12 @@
-package com.example.showtracker.common;
+package com.example.showtracker.data;
 
-import android.content.*;
 import android.os.*;
 import android.util.*;
 
-import androidx.annotation.*;
 import androidx.room.*;
-import androidx.sqlite.db.*;
 
 import com.example.showtracker.data.dao.*;
 import com.example.showtracker.data.entities.*;
-import com.example.showtracker.common.utils.*;
 
 @Database(
     entities = {
@@ -25,32 +21,32 @@ import com.example.showtracker.common.utils.*;
 )
 public abstract class AppDatabase extends RoomDatabase {
     private static final String TAG = "AppDatabase";
-    private static final String DB_NAME = "show_tracker.db";
-    private static volatile AppDatabase INSTANCE;
+//    private static final String DB_NAME = "show_tracker.db";
+//    private static volatile AppDatabase INSTANCE;
 
-    public static AppDatabase getInstance(final Context context) {
-        if (INSTANCE == null) {
-            synchronized (AppDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(
-                            context.getApplicationContext(),
-                            AppDatabase.class,
-                            DB_NAME
-                        )
-                        .addCallback(new Callback() {
-                            @Override
-                            public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                                super.onOpen(db);
-                                DataBaseInitializer.populateDb(getInstance(context));
-                                getInstance(context).populateInitialData();
-                            }
-                        })
-                        .build();
-                }
-            }
-        }
-        return INSTANCE;
-    }
+//    public static AppDatabase getInstance(final Application application) {
+//        if (INSTANCE == null) {
+//            synchronized (AppDatabase.class) {
+//                if (INSTANCE == null) {
+//                    INSTANCE = Room.databaseBuilder(
+//                            application,
+//                            AppDatabase.class,
+//                            DB_NAME
+//                        )
+//                        .addCallback(new Callback() {
+//                            @Override
+//                            public void onCreate(@NonNull SupportSQLiteDatabase db) {
+//                                super.onOpen(db);
+//                                DataBaseInitializer.populateDb(getInstance(application));
+//                                getInstance(application).populateInitialData();
+//                            }
+//                        })
+//                        .build();
+//                }
+//            }
+//        }
+//        return INSTANCE;
+//    }
 
     public abstract ListDao listDao();
 
@@ -58,14 +54,14 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract TagDao tagDao();
 
-    private void populateInitialData() {
+    public void populateInitialData() {
         ListOfShows allShowsList = new ListOfShows("All Shows");
         Tag favoriteTag = new Tag("Favorite");
         Log.d(TAG, "populateInitialData: " + allShowsList.toString());
         new DefaultInsertAsync(
-            INSTANCE.listDao(),
-            INSTANCE.showDao(),
-            INSTANCE.tagDao(),
+            this.listDao(),
+            this.showDao(),
+            this.tagDao(),
             allShowsList,
             favoriteTag
         ).execute();

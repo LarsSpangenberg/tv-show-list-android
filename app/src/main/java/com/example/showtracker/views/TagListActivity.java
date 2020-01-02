@@ -42,7 +42,9 @@ public class TagListActivity extends BaseListActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        this.viewModel = ViewModelProviders.of(this).get(TagListViewModel.class);
+        ViewModelFactory viewModelFactory = getPresentationComponent().getViewModelFactory();
+        this.viewModel = ViewModelProviders.of(this, viewModelFactory).get(TagListViewModel.class);
+
         this.adapter = new TagListRVAdapter(this, this);
         RecyclerView rv = findViewById(R.id.tags_list);
 

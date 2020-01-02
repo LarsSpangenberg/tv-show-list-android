@@ -1,35 +1,20 @@
 package com.example.showtracker.data;
 
-import android.app.*;
 import android.os.*;
 
 import androidx.annotation.*;
 import androidx.lifecycle.*;
 
-import com.example.showtracker.common.*;
 import com.example.showtracker.data.dao.*;
 import com.example.showtracker.data.entities.*;
 
 import java.util.*;
 
 public class TagsRepository {
-    private static volatile TagsRepository INSTANCE;
     private TagDao tagDao;
 
-    private TagsRepository(@NonNull Application application) {
-        AppDatabase db = AppDatabase.getInstance(application);
+    public TagsRepository(@NonNull AppDatabase db) {
         this.tagDao = db.tagDao();
-    }
-
-    public static TagsRepository getInstance(@NonNull Application application) {
-        if (INSTANCE == null) {
-            synchronized (TagsRepository.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new TagsRepository(application);
-                }
-            }
-        }
-        return INSTANCE;
     }
 
 //    public LiveData<List<Tag>> findTagsByShowId(String showId) {

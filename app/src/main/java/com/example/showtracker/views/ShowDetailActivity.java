@@ -98,24 +98,24 @@ public class ShowDetailActivity extends BaseActivity {
             }
         });
 
+        ViewModelWithIdFactory factory = getPresentationComponent().getViewModelWithIdFactory();
+
         Intent intent = getIntent();
         String action = intent.getAction();
-        String showId = null;
         if (action != null && action.equals(Intent.ACTION_EDIT)) {
             // user is updating an existing Show
-            this.editMode = true;
-            showId = intent.getStringExtra(SHOW_ID);
+            editMode = true;
+            factory.setId(intent.getStringExtra(SHOW_ID));
         } else {
             // user is creating new Show
             intent.getStringExtra(LIST_ID);
-            this.showsTags = new ArrayList<>();
-            this.showsLists = new ArrayList<>();
-            this.showsLists.add(intent.getStringExtra(LIST_ID));
-            this.title.requestFocus();
+            showsTags = new ArrayList<>();
+            showsLists = new ArrayList<>();
+            showsLists.add(intent.getStringExtra(LIST_ID));
+            title.requestFocus();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
-        ViewModelWithIdFactory factory = new ViewModelWithIdFactory(getApplication(), showId);
         this.viewModel = ViewModelProviders.of(this, factory).get(ShowDetailsViewModel.class);
 
         subscribeUIShowDetails();

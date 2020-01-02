@@ -1,58 +1,57 @@
 package com.example.showtracker.viewmodels;
 
-import android.app.*;
 import android.util.*;
 
-import androidx.annotation.*;
-import androidx.lifecycle.*;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.*;
 
+import com.example.showtracker.*;
+import com.example.showtracker.common.dependencyinjection.application.*;
+import com.example.showtracker.common.utils.*;
 import com.example.showtracker.data.*;
 import com.example.showtracker.data.entities.*;
-import com.example.showtracker.common.utils.*;
 
 import java.util.*;
 
-public class ShowsListViewModel extends AndroidViewModel {
+public class ShowsListViewModel extends ViewModel {
     private static final String TAG = "ShowsListViewModel";
     private ShowsRepository showsRepository;
-    private TagsRepository tagsRepository;
     private LiveData<List<ShowWithTags>> shows;
     private LiveData<List<Tag>> allTags;
     private MediatorLiveData<ShowsListData> showsListData;
     private String listId;
 
 
-    public ShowsListViewModel(@NonNull Application application, String listId) {
-        super(application);
+    public ShowsListViewModel(MyApplication application, String listId) {
         Log.d(TAG, "ShowsListViewModel: passed id " + listId + " to VM");
         this.listId = listId;
-        this.showsRepository = ShowsRepository.getInstance(application);
-        this.tagsRepository = TagsRepository.getInstance(application);
-        this.allTags = this.tagsRepository.getAll();
+
+        ApplicationComponent appComponent = application.getApplicationComponent();
+        showsRepository = appComponent.getShowsRepository();
+        allTags = appComponent.getTagsRepository().getAll();
 
         setShowsListData();
     }
 
     public void setShowsListData(ShowsListFilters filters) {
-        this.shows = this.showsRepository.getShowsInList(this.listId, filters);
+        shows = showsRepository.getShowsInList(listId, filters);
         setShowsListLiveData();
     }
 
     private void setShowsListData() {
-        this.shows = this.showsRepository.getShowsInList(this.listId);
+        shows = showsRepository.getShowsInList(listId);
         setShowsListLiveData();
     }
 
     private void setShowsListLiveData() {
-        this.showsListData = new MediatorLiveData<>();
-        this.showsListData.addSource(this.shows, new Observer<List<ShowWithTags>>() {
+        showsListData = new MediatorLiveData<>();
+        showsListData.addSource(shows, new Observer<List<ShowWithTags>>() {
             @Override
             public void onChanged(List<ShowWithTags> showsWithTags) {
                 showsListData.setValue(combineShowsListData(shows, allTags));
             }
         });
-        this.showsListData.addSource(this.allTags, new Observer<List<Tag>>() {
+        showsListData.addSource(allTags, new Observer<List<Tag>>() {
             @Override
             public void onChanged(List<Tag> tags) {
                 showsListData.setValue(combineShowsListData(shows, allTags));
@@ -61,7 +60,7 @@ public class ShowsListViewModel extends AndroidViewModel {
     }
 
     public LiveData<ShowsListData> getShowsListData() {
-        return this.showsListData;
+        return showsListData;
     }
 
 //    public List<Tag> getAllTags() {
@@ -69,11 +68,11 @@ public class ShowsListViewModel extends AndroidViewModel {
 //    }
 
     public void deleteShowsFromList(String listId, List<String> showIds) {
-        this.showsRepository.deleteShowFromList(listId, showIds);
+        showsRepository.deleteShowFromList(listId, showIds);
     }
 
     public void moveShow(Show toMove, Show target) {
-        this.showsRepository.moveShow(toMove, target);
+        showsRepository.moveShow(toMove, target);
     }
 
     private ShowsListData combineShowsListData(LiveData<List<ShowWithTags>> shows, LiveData<List<Tag>> allTags) {

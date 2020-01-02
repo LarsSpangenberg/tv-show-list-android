@@ -7,8 +7,14 @@ import com.example.showtracker.common.dependencyinjection.application.*;
 import com.example.showtracker.common.dependencyinjection.presentation.*;
 
 public class BaseActivity extends AppCompatActivity {
+    private boolean isInjectorUsed;
+
     protected PresentationComponent getPresentationComponent() {
-        return getApplicationComponent().newPresentationComponent(new PresentationModule());
+        if (isInjectorUsed) {
+            throw new RuntimeException("no need to use injector more than once");
+        }
+        isInjectorUsed = true;
+        return getApplicationComponent().newPresentationComponent(new PresentationModule(this));
     }
 
     private ApplicationComponent getApplicationComponent() {

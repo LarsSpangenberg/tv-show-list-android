@@ -1,35 +1,22 @@
 package com.example.showtracker.data;
 
-import android.app.*;
 import android.os.*;
 
+import androidx.annotation.*;
 import androidx.lifecycle.*;
 
-import com.example.showtracker.common.*;
 import com.example.showtracker.data.dao.*;
 import com.example.showtracker.data.entities.*;
 
 import java.util.*;
 
 public class ListsRepository {
-    private static volatile ListsRepository INSTANCE;
     private ListDao listDao;
 
-    private ListsRepository(Application application) {
-        AppDatabase db = AppDatabase.getInstance(application);
+    public ListsRepository(@NonNull AppDatabase db) {
         this.listDao = db.listDao();
     }
 
-    public static ListsRepository getInstance(Application application) {
-        if (INSTANCE == null) {
-            synchronized (ListsRepository.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new ListsRepository(application);
-                }
-            }
-        }
-        return INSTANCE;
-    }
 
     public LiveData<List<ListOfShows>> getAllEditableLists() {
         return this.listDao.getAllEditableLists();

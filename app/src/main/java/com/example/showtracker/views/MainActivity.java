@@ -38,11 +38,13 @@ public class MainActivity extends BaseListActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        ViewModelFactory viewModelFactory = getPresentationComponent().getViewModelFactory();
+        this.viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
         this.adapter = new ListOfShowsRVAdapter(this, this);
         RecyclerView recyclerView = findViewById(R.id.lists_list);
         recyclerView.setAdapter(this.adapter);
