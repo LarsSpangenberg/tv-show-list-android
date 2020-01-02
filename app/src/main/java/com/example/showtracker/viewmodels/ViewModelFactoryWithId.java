@@ -5,8 +5,6 @@ import android.app.*;
 import androidx.annotation.*;
 import androidx.lifecycle.*;
 
-import java.lang.reflect.*;
-
 public class ViewModelFactoryWithId implements ViewModelProvider.Factory {
 
     private Application application;
@@ -21,14 +19,12 @@ public class ViewModelFactoryWithId implements ViewModelProvider.Factory {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        try {
-            return modelClass
-                .getConstructor(application.getClass(), String.class)
-                .newInstance(application, id);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("could not get constructor of " + modelClass, e);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("cannot create and instance class of " + modelClass, e);
+        if (modelClass == ShowsListViewModel.class) {
+            return (T) new ShowsListViewModel(application, id);
+        } else if (modelClass == ShowDetailsViewModel.class) {
+            return (T) new ShowDetailsViewModel(application, id);
+        } else {
+            throw new RuntimeException("invalid view model class: " + modelClass);
         }
     }
 }

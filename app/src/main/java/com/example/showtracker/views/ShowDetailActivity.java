@@ -15,6 +15,7 @@ import androidx.lifecycle.*;
 
 import com.example.showtracker.R;
 import com.example.showtracker.data.entities.*;
+import com.example.showtracker.screens.*;
 import com.example.showtracker.viewmodels.*;
 import com.example.showtracker.viewmodels.ShowDetailsViewModel.*;
 import com.google.android.material.appbar.*;
@@ -27,7 +28,7 @@ import java.util.*;
 import static com.example.showtracker.data.entities.ListOfShows.*;
 import static com.example.showtracker.data.entities.Show.*;
 
-public class ShowDetailActivity extends AppCompatActivity {
+public class ShowDetailActivity extends BaseActivity {
 
     private static final String TAG = "ShowDetailActivity";
     private ShowDetailsViewModel viewModel;

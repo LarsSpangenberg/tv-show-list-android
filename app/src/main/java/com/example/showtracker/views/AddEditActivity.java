@@ -9,13 +9,14 @@ import android.widget.*;
 import androidx.appcompat.app.*;
 
 import com.example.showtracker.*;
+import com.example.showtracker.screens.*;
 import com.google.android.material.textfield.*;
 
 import java.io.*;
 
 import static android.content.Intent.*;
 
-public class AddEditActivity extends AppCompatActivity {
+public class AddEditActivity extends BaseActivity {
     public static final String EXTRA_REPLY =
         "com.example.showtracker.view.AddEditActivity.REPLY";
     public static final String ITEM_TO_EDIT = "ITEM_TO_EDIT";

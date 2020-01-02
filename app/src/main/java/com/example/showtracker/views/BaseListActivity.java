@@ -3,11 +3,12 @@ package com.example.showtracker.views;
 import android.util.*;
 import android.view.*;
 
-import androidx.appcompat.app.*;
-
 import com.example.showtracker.*;
+import com.example.showtracker.screens.*;
 
 import java.util.*;
+
+// TODO: refactor logic in this class to use composition instead of inheritance
 
 /**
  * extend this class if an activity needs methods to handle selection of data (onLongClick) for
@@ -16,7 +17,7 @@ import java.util.*;
  * if the delete and/or edit button is set with a MenuItem then this class will also handle the
  * visibility of said buttons.
  **/
-public abstract class BaseListActivity extends AppCompatActivity {
+public abstract class BaseListActivity extends BaseActivity {
     private static final String TAG = "BaseListActivity";
     public static final int SORT_BY_NAME = 0;
     public static final int SORT_BY_CUSTOM = 1;
