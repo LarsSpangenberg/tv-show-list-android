@@ -60,7 +60,7 @@ public class ShowsListActivity extends BaseListActivity
         Intent intent = getIntent();
         this.currentList =
             (ListOfShows) intent.getSerializableExtra(ListOfShows.class.getSimpleName());
-        ViewModelFactoryWithId factory = new ViewModelFactoryWithId(
+        ViewModelWithIdFactory factory = new ViewModelWithIdFactory(
             getApplication(),
             this.currentList.id
         );

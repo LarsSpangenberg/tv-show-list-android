@@ -115,7 +115,7 @@ public class ShowDetailActivity extends BaseActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
-        ViewModelFactoryWithId factory = new ViewModelFactoryWithId(getApplication(), showId);
+        ViewModelWithIdFactory factory = new ViewModelWithIdFactory(getApplication(), showId);
         this.viewModel = ViewModelProviders.of(this, factory).get(ShowDetailsViewModel.class);
 
         subscribeUIShowDetails();
