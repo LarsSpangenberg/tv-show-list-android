@@ -7,7 +7,7 @@ import androidx.lifecycle.*;
 
 import com.example.showtracker.common.*;
 import com.example.showtracker.common.dependencyinjection.application.*;
-import com.example.showtracker.common.utils.*;
+import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.data.shows.*;
 import com.example.showtracker.data.shows.entities.*;
 import com.example.showtracker.data.tags.entities.*;

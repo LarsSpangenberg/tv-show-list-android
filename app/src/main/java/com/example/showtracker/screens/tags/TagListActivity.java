@@ -13,7 +13,7 @@ import androidx.lifecycle.*;
 import androidx.recyclerview.widget.*;
 
 import com.example.showtracker.R;
-import com.example.showtracker.common.utils.*;
+import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.data.tags.entities.*;
 import com.example.showtracker.screens.common.activities.*;
 import com.example.showtracker.screens.common.viewmodel.*;

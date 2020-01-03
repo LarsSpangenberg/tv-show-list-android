@@ -5,7 +5,7 @@ import android.os.*;
 import androidx.annotation.*;
 import androidx.lifecycle.*;
 
-import com.example.showtracker.data.common.*;
+import com.example.showtracker.data.*;
 import com.example.showtracker.data.tags.entities.*;
 
 import java.util.*;

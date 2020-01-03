@@ -10,7 +10,7 @@ import androidx.annotation.*;
 import androidx.recyclerview.widget.*;
 
 import com.example.showtracker.*;
-import com.example.showtracker.common.utils.*;
+import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.data.lists.entities.*;
 
 import java.util.*;

@@ -1,4 +1,4 @@
-package com.example.showtracker.common.utils;
+package com.example.showtracker.screens.common.utils;
 
 /**
  * interface to simplify MultiSpinner use

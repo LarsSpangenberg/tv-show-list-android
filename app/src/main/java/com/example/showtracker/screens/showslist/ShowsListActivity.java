@@ -15,7 +15,7 @@ import androidx.lifecycle.*;
 import androidx.recyclerview.widget.*;
 
 import com.example.showtracker.R;
-import com.example.showtracker.common.utils.*;
+import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.data.lists.entities.*;
 import com.example.showtracker.data.shows.entities.*;
 import com.example.showtracker.data.tags.entities.*;

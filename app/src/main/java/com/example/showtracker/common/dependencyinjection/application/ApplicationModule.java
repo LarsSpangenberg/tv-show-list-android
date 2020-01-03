@@ -7,7 +7,7 @@ import androidx.room.*;
 import androidx.sqlite.db.*;
 
 import com.example.showtracker.common.*;
-import com.example.showtracker.common.utils.*;
+import com.example.showtracker.data.*;
 import com.example.showtracker.data.common.*;
 import com.example.showtracker.data.lists.*;
 import com.example.showtracker.data.shows.*;
@@ -21,26 +21,29 @@ import dagger.*;
 public class ApplicationModule {
 
     private final Application application;
+    private AppDatabase database;
 
     public ApplicationModule(Application application) {
         this.application = application;
     }
 
-    @Singleton
     @Provides
     AppDatabase getRoomDatabase() {
-        return Room.databaseBuilder(
-            application,
-            AppDatabase.class,
-            Constants.DB_NAME
-        ).addCallback(new RoomDatabase.Callback() {
-            @Override
-            public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                super.onOpen(db);
-                DataBaseInitializer.populateDb(getRoomDatabase());
-                getRoomDatabase().populateInitialData();
-            }
-        }).build();
+        if (database == null) {
+            database = Room.databaseBuilder(
+                application,
+                AppDatabase.class,
+                Constants.DB_NAME
+            ).addCallback(new RoomDatabase.Callback() {
+                @Override
+                public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                    super.onOpen(db);
+                    DataBaseInitializer.populateDb(database);
+                    database.populateInitialData();
+                }
+            }).build();
+        }
+        return database;
     }
 
     @Singleton

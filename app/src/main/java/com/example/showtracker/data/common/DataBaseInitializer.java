@@ -1,9 +1,9 @@
-package com.example.showtracker.common.utils;
+package com.example.showtracker.data.common;
 
 import android.os.*;
 import android.util.*;
 
-import com.example.showtracker.data.common.*;
+import com.example.showtracker.data.*;
 import com.example.showtracker.data.common.joins.*;
 import com.example.showtracker.data.lists.entities.*;
 import com.example.showtracker.data.shows.entities.*;
