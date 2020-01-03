@@ -15,8 +15,8 @@ import com.example.showtracker.common.utils.*;
 
 import java.util.*;
 
-import static com.example.showtracker.views.BaseListActivity.SORT_BY_CUSTOM;
-import static com.example.showtracker.views.BaseListActivity.SORT_BY_NAME;
+import static com.example.showtracker.screens.BaseListActivity.SORT_BY_CUSTOM;
+import static com.example.showtracker.screens.BaseListActivity.SORT_BY_NAME;
 import static com.example.showtracker.views.MainActivity.LIST_SORT_MODE;
 
 public class ListOfShowsRVAdapter

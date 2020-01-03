@@ -18,7 +18,7 @@ import com.example.showtracker.common.utils.*;
 
 import java.util.*;
 
-import static com.example.showtracker.views.BaseListActivity.*;
+import static com.example.showtracker.screens.BaseListActivity.*;
 import static com.example.showtracker.views.ShowsListActivity.*;
 
 public class ShowRVAdapter extends RecyclerView.Adapter<ShowRVAdapter.ShowViewHolder> implements

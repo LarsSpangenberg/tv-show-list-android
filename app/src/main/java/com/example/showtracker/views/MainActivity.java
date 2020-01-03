@@ -17,6 +17,7 @@ import com.example.showtracker.R;
 import com.example.showtracker.adapters.*;
 import com.example.showtracker.data.entities.*;
 import com.example.showtracker.common.utils.*;
+import com.example.showtracker.screens.*;
 import com.example.showtracker.viewmodels.*;
 import com.google.android.material.floatingactionbutton.*;
 import com.google.android.material.snackbar.*;
@@ -44,13 +45,13 @@ public class MainActivity extends BaseListActivity
         setSupportActionBar(toolbar);
 
         ViewModelFactory viewModelFactory = getPresentationComponent().getViewModelFactory();
-        this.viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
-        this.adapter = new ListOfShowsRVAdapter(this, this);
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
+        adapter = new ListOfShowsRVAdapter(this, this);
         RecyclerView recyclerView = findViewById(R.id.lists_list);
-        recyclerView.setAdapter(this.adapter);
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ItemTouchHelper.Callback callback = new ItemMoveCallback(this.adapter);
+        ItemTouchHelper.Callback callback = new ItemMoveCallback(adapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(recyclerView);
 

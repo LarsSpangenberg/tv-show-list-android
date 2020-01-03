@@ -2,6 +2,7 @@ package com.example.showtracker.common.dependencyinjection.presentation;
 
 import android.app.*;
 import android.content.*;
+import android.view.*;
 
 import dagger.*;
 
@@ -14,9 +15,13 @@ public class PresentationModule {
         this.activity = activity;
     }
 
-
     @Provides
     Context context(Activity activity) {
         return activity;
+    }
+
+    @Provides
+    LayoutInflater getLayoutInflater() {
+        return LayoutInflater.from(activity);
     }
 }

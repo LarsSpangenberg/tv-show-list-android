@@ -1,10 +1,9 @@
-package com.example.showtracker.views;
+package com.example.showtracker.screens;
 
 import android.util.*;
 import android.view.*;
 
 import com.example.showtracker.*;
-import com.example.showtracker.screens.*;
 
 import java.util.*;
 
@@ -26,11 +25,11 @@ public abstract class BaseListActivity extends BaseActivity {
     private MenuItem editButton;
 
 
-    List<String> getSelection() {
+    protected List<String> getSelection() {
         return this.selectionIds;
     }
 
-    void handleSelection(String itemId) {
+    protected void handleSelection(String itemId) {
 
         Log.d(TAG, "handleSelection: selected " + this.selectionIds.contains(itemId));
         Log.d(TAG, "handleSelection: " + this.selectionIds.toString());
@@ -41,26 +40,26 @@ public abstract class BaseListActivity extends BaseActivity {
         if (this.editButton != null) handleEditIcon();
     }
 
-    void unselectItem(String itemId) {
+    protected void unselectItem(String itemId) {
         this.selectionIds.remove(itemId);
 
         if (this.deleteButton != null) handleDeleteIcon();
         if (this.editButton != null) handleEditIcon();
     }
 
-    void resetSelection() {
+    protected void resetSelection() {
 //        this.selection.clear();
         this.selectionIds.clear();
         if (this.deleteButton != null) this.deleteButton.setVisible(false);
         if (this.editButton != null) this.editButton.setVisible(false);
     }
 
-    void setDeleteButton(MenuItem deleteButton) {
+    protected void setDeleteButton(MenuItem deleteButton) {
         this.deleteButton = deleteButton;
         if (this.deleteButton != null) handleDeleteIcon();
     }
 
-    void setEditButton(MenuItem editButton) {
+    protected void setEditButton(MenuItem editButton) {
         this.editButton = editButton;
         if (this.editButton != null) handleEditIcon();
     }
