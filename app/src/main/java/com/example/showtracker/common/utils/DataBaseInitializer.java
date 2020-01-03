@@ -3,8 +3,11 @@ package com.example.showtracker.common.utils;
 import android.os.*;
 import android.util.*;
 
-import com.example.showtracker.data.*;
-import com.example.showtracker.data.entities.*;
+import com.example.showtracker.data.common.*;
+import com.example.showtracker.data.common.joins.*;
+import com.example.showtracker.data.lists.entities.*;
+import com.example.showtracker.data.shows.entities.*;
+import com.example.showtracker.data.tags.entities.*;
 
 import java.util.*;
 
@@ -16,8 +19,8 @@ public class DataBaseInitializer {
         task.execute();
     }
 
-    private static ListOfShows addList(final AppDatabase db, String name) {
-        ListOfShows list = new ListOfShows(name);
+    private static ListEntity addList(final AppDatabase db, String name) {
+        ListEntity list = new ListEntity(name);
         if (name.equals("All Shows")) {
              db.showDao().handleAllShowsSyncToList(list.id);
         }
@@ -27,7 +30,7 @@ public class DataBaseInitializer {
         return list;
     }
 
-    private static Show addShow(final AppDatabase db, String title, ListOfShows list) {
+    private static Show addShow(final AppDatabase db, String title, ListEntity list) {
         Log.d(TAG, "addShow: attempting to addTag show with title " + title);
         Show show = new Show(title);
         db.showDao().addShowWithListId(show, list.id);
@@ -39,7 +42,7 @@ public class DataBaseInitializer {
         return show;
     }
 
-    private static void addShowToList(final AppDatabase db, Show show, ListOfShows list) {
+    private static void addShowToList(final AppDatabase db, Show show, ListEntity list) {
 
         ListShowJoin join = new ListShowJoin(list.id, show.id);
         db.showDao().addShowToList(join);
@@ -66,12 +69,12 @@ public class DataBaseInitializer {
 //        db.populateInitialData();
 
         // list with name All Shows is synced to all shows
-//        ListOfShows allShowsList = addList(db, "All Shows");
+//        ListEntity allShowsList = addList(db, "All Shows");
 
-        ListOfShows animeList = addList(db, "Anime");
-        ListOfShows comedyList = addList(db, "Comedy");
-        ListOfShows actionList = addList(db, "Action Shows");
-        ListOfShows superHeroList = addList(db, "Superhero Shows");
+        ListEntity animeList = addList(db, "Anime");
+        ListEntity comedyList = addList(db, "Comedy");
+        ListEntity actionList = addList(db, "Action Shows");
+        ListEntity superHeroList = addList(db, "Superhero Shows");
         Log.d(TAG, "populateWithTestData: all lists added");
         Log.d(TAG, "populateWithTestData: ==============================");
 

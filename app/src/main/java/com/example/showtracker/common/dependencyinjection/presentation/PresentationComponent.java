@@ -1,6 +1,6 @@
 package com.example.showtracker.common.dependencyinjection.presentation;
 
-import com.example.showtracker.viewmodels.*;
+import com.example.showtracker.screens.common.viewmodel.*;
 
 import dagger.*;
 

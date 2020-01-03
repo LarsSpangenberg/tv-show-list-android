@@ -1,7 +1,9 @@
 package com.example.showtracker.common.dependencyinjection.application;
 
 import com.example.showtracker.common.dependencyinjection.presentation.*;
-import com.example.showtracker.data.*;
+import com.example.showtracker.data.lists.*;
+import com.example.showtracker.data.shows.*;
+import com.example.showtracker.data.tags.*;
 
 import javax.inject.*;
 

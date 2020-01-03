@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".views.TagListActivity"
+    tools:context=".screens.tags.TagListActivity"
     tools:showIn="@layout/activity_tag_list">
 
     <TextView

@@ -3,7 +3,7 @@
     package="com.example.showtracker">
 
     <application
-        android:name=".MyApplication"
+        android:name=".common.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,29 +11,29 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".views.TagListActivity"
+            android:name=".screens.tags.TagListActivity"
             android:label="@string/title_activity_tag"
-            android:parentActivityName=".views.MainActivity"
+            android:parentActivityName=".screens.lists.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".views.ShowDetailActivity"
+            android:name=".screens.showdetails.ShowDetailActivity"
             android:label="@string/title_activity_show_detail"
-            android:parentActivityName=".views.ShowsListActivity"
+            android:parentActivityName=".screens.showslist.ShowsListActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.showtracker.views.ShowsListActivity" />
+                android:value="com.example.showtracker.screens.showslist.ShowsListActivity" />
         </activity>
         <activity
-            android:name=".views.ShowsListActivity"
+            android:name=".screens.showslist.ShowsListActivity"
             android:label="@string/title_activity_shows_list"
             android:launchMode="singleTop"
-            android:parentActivityName=".views.MainActivity"
+            android:parentActivityName=".screens.lists.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".views.MainActivity"
+            android:name=".screens.lists.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -42,7 +42,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.AddEditActivity"
+        <activity android:name=".screens.common.activities.AddEditActivity"
             android:windowSoftInputMode="stateVisible"/>
     </application>
 </manifest>

@@ -6,9 +6,12 @@ import androidx.annotation.*;
 import androidx.room.*;
 import androidx.sqlite.db.*;
 
-import com.example.showtracker.*;
+import com.example.showtracker.common.*;
 import com.example.showtracker.common.utils.*;
-import com.example.showtracker.data.*;
+import com.example.showtracker.data.common.*;
+import com.example.showtracker.data.lists.*;
+import com.example.showtracker.data.shows.*;
+import com.example.showtracker.data.tags.*;
 
 import javax.inject.*;
 

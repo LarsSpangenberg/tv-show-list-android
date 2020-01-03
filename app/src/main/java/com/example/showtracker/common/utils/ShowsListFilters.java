@@ -1,6 +1,6 @@
 package com.example.showtracker.common.utils;
 
-import com.example.showtracker.data.entities.*;
+import com.example.showtracker.data.shows.entities.*;
 
 import java.util.*;
 

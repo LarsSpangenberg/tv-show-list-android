@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.showtracker.views.MainActivity">
+    tools:context="com.example.showtracker.screens.lists.MainActivity">
     <item
         android:id="@+id/main_menu_sort"
         android:title="@string/sort_menu_title">
