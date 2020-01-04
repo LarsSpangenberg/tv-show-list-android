@@ -13,6 +13,8 @@ import com.example.showtracker.data.lists.*;
 import com.example.showtracker.data.shows.*;
 import com.example.showtracker.data.tags.*;
 
+import java.util.concurrent.*;
+
 import javax.inject.*;
 
 import dagger.*;
@@ -25,6 +27,18 @@ public class ApplicationModule {
 
     public ApplicationModule(Application application) {
         this.application = application;
+    }
+
+    @Singleton
+    @Provides
+    ThreadPoolExecutor getThreadPool() {
+        return new ThreadPoolExecutor(
+            3,
+            Integer.MAX_VALUE,
+            60L,
+            TimeUnit.SECONDS,
+            new SynchronousQueue<Runnable>()
+        );
     }
 
     @Provides
@@ -48,8 +62,8 @@ public class ApplicationModule {
 
     @Singleton
     @Provides
-    ListsRepository getListsRepository(AppDatabase db) {
-        return new ListsRepository(db);
+    ListsRepository getListsRepository(AppDatabase db, ThreadPoolExecutor backgroundThread) {
+        return new ListsRepository(db, backgroundThread);
     }
 
     @Singleton

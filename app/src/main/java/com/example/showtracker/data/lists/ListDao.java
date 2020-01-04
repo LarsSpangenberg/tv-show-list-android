@@ -30,31 +30,23 @@ public abstract class ListDao {
     @Query("SELECT * FROM lists WHERE id IN (:ids)")
     public abstract ListEntity findById(String... ids);
 
-//    @Query(
-//        "SELECT lists.* FROM lists "
-//        + "INNER JOIN list_show_join "
-//        + "ON lists.id = list_show_join.listId "
-//        + "WHERE list_show_join.showId = :showId"
-//    )
-//    public abstract LiveData<List<ListEntity>> findListsByShowId(String showId);
-
     @Query("SELECT * FROM lists "
            + "WHERE position >= :startPosition "
            + "AND position <= :endPosition")
     abstract List<ListEntity> findListsInPositionRange(int startPosition, int endPosition);
 
     @Transaction
-    public void moveListPosition(ListEntity listToMove, ListEntity listInDesiredPosition) {
+    public void moveListPosition(ListEntity listToMove, ListEntity target) {
         int oldPosition = listToMove.position;
-        int newPosition = listInDesiredPosition.position;
+        int newPosition = target.position;
         int positionDifference = newPosition - oldPosition;
         List<ListEntity> listsToMove = null;
 
         // if position difference is 0 that means it's the same list and no changes should be made
         if (positionDifference == 1 || positionDifference == -1) {
-            listInDesiredPosition.position = oldPosition;
+            target.position = oldPosition;
             listsToMove = new ArrayList<>();
-            listsToMove.add(listInDesiredPosition);
+            listsToMove.add(target);
         } else if (positionDifference > 1) {
             listsToMove = findListsInPositionRange(oldPosition + 1, newPosition);
             for (ListEntity list : listsToMove) {
