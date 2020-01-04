@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.*;
 
 @Entity(tableName = "lists")
-public class ListEntity implements Serializable, listItem {
+public class ListEntity implements Serializable, ListItem {
     @Ignore
     public static final String LIST_ID = "LIST_ID";
 
@@ -28,6 +28,16 @@ public class ListEntity implements Serializable, listItem {
     @Override
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    public int getPosition() {
+        return position;
+    }
+
+    @Override
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     @NonNull

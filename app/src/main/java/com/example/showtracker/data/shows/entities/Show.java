@@ -12,7 +12,7 @@ import java.util.*;
     tableName = "shows",
     indices = @Index("id")
 )
-public class Show implements listItem {
+public class Show implements ListItem {
     @Ignore
     public static final String SHOW_ID = "SHOW_ID";
 
@@ -75,6 +75,16 @@ public class Show implements listItem {
     @Override
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    public int getPosition() {
+        return position;
+    }
+
+    @Override
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     @Ignore

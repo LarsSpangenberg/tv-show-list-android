@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.*;
 
 @Entity(tableName = "tags")
-public class Tag implements Serializable, listItem {
+public class Tag implements Serializable, ListItem {
     @PrimaryKey
     @NonNull
     public String id;
@@ -25,6 +25,16 @@ public class Tag implements Serializable, listItem {
     @Override
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    public int getPosition() {
+        return position;
+    }
+
+    @Override
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     @NonNull

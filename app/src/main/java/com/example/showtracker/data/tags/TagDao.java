@@ -3,6 +3,7 @@ package com.example.showtracker.data.tags;
 import androidx.lifecycle.*;
 import androidx.room.*;
 
+import com.example.showtracker.data.common.*;
 import com.example.showtracker.data.common.joins.*;
 import com.example.showtracker.data.tags.entities.*;
 
@@ -41,39 +42,16 @@ public abstract class TagDao {
 
     @Transaction
     public void moveTagPosition(Tag tagToMove, Tag target) {
-        int oldPosition = tagToMove.position;
-        int newPosition = target.position;
-        int positionDifference = newPosition - oldPosition;
-        List<Tag> tagsToMove = null;
-
-        // TODO create helper class for moving position in database and implement in all DAOs
-
-        // if position difference is 0 that means it's the same tag and no changes should be made
-        if (positionDifference == 1 || positionDifference == -1) {
-            // if difference is 1 or -1 the tags are adjacent and only need to swap position
-            target.position = oldPosition;
-            tagsToMove = new ArrayList<>();
-            tagsToMove.add(target);
-        } else if (positionDifference > 1) {
-            // if difference is positive the tag needs to move up towards the end of the array
-            // and all other tags in between it and the target need to move 1 back
-            tagsToMove = findTagsInPositionRange(oldPosition + 1, newPosition);
-            for (Tag tag : tagsToMove) {
-                tag.position--;
-            }
-        } else if (positionDifference < -1) {
-            // if difference is negative the tag needs to move back towards the beginning of the
-            // array and all tags in between it and the target need to move 1 forward
-            tagsToMove = findTagsInPositionRange(newPosition, oldPosition - 1);
-            for (Tag tag : tagsToMove) {
-                tag.position++;
-            }
-        }
-
-        if (tagsToMove != null) {
-            tagToMove.position = newPosition;
-            tagsToMove.add(tagToMove);
-            update(tagsToMove);
+        MovePositionHelper<Tag> helper =
+            new MovePositionHelper<Tag>(tagToMove, target) {
+                @Override
+                public List<Tag> findItemsToMove(int startOfRange, int endOfRange) {
+                    return findTagsInPositionRange(startOfRange, endOfRange);
+                }
+            };
+        List<Tag> itemsToMove =  helper.getItemsWithAdjustedPositions();
+        if (itemsToMove != null) {
+            update(itemsToMove);
         }
     }
 

@@ -3,6 +3,7 @@ package com.example.showtracker.data.shows;
 import androidx.lifecycle.*;
 import androidx.room.*;
 
+import com.example.showtracker.data.common.*;
 import com.example.showtracker.data.common.joins.*;
 import com.example.showtracker.data.shows.entities.*;
 
@@ -163,7 +164,7 @@ public abstract class ShowDao {
 
     /**
      * Use this method to addTag a new show to db
-     *
+     * <p>
      * All shows also automatically addTag to all the lists whose id is in the list_synced_to_all
      * table
      **/
@@ -203,38 +204,17 @@ public abstract class ShowDao {
     }
 
     @Transaction
-    public void moveShowPosition(Show showToMove, Show showInDesiredPosition) {
-        int oldPosition = showToMove.position;
-        int newPosition = showInDesiredPosition.position;
-        int positionDifference = newPosition - oldPosition;
-        List<Show> showsToMove = null;
-
-        // if position difference is 0 that means it's the same show and no changes should be made
-        if (positionDifference == 1 || positionDifference == -1) {
-            // if difference is 1 or -1 the shows are adjacent and only need to swap position
-            showInDesiredPosition.position = oldPosition;
-            showsToMove = new ArrayList<>();
-            showsToMove.add(showInDesiredPosition);
-        } else if (positionDifference > 1) {
-            // if difference is positive the show needs to move up towards the end of the array
-            // and all other shows in between it and the target need to move 1 back
-            showsToMove = findShowsInPositionRange(oldPosition + 1, newPosition);
-            for (Show show : showsToMove) {
-                show.position--;
+    public void moveShowPosition(Show showToMove, Show target) {
+        MovePositionHelper<Show> helper = new MovePositionHelper<Show>(showToMove, target) {
+            @Override
+            public List<Show> findItemsToMove(int startOfRange, int endOfRange) {
+                return findShowsInPositionRange(startOfRange, endOfRange);
             }
-        } else if (positionDifference < -1) {
-            // if difference is negative the show needs to move back towards the beginning of the
-            // array and all shows in between it and the target need to move 1 forward
-            showsToMove = findShowsInPositionRange(newPosition, oldPosition - 1);
-            for (Show show : showsToMove) {
-                show.position++;
-            }
-        }
+        };
 
-        if (showsToMove != null) {
-            showToMove.position = newPosition;
-            showsToMove.add(showToMove);
-            updateShow(showsToMove);
+        List<Show> itemsToMove = helper.getItemsWithAdjustedPositions();
+        if (itemsToMove != null) {
+            updateShow(itemsToMove);
         }
     }
 

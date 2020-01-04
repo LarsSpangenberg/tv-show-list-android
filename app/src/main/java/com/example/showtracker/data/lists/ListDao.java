@@ -3,6 +3,7 @@ package com.example.showtracker.data.lists;
 import androidx.lifecycle.*;
 import androidx.room.*;
 
+import com.example.showtracker.data.common.*;
 import com.example.showtracker.data.common.joins.*;
 import com.example.showtracker.data.lists.entities.*;
 
@@ -37,37 +38,15 @@ public abstract class ListDao {
 
     @Transaction
     public void moveListPosition(ListEntity listToMove, ListEntity target) {
-        int oldPosition = listToMove.position;
-        int newPosition = target.position;
-        int positionDifference = newPosition - oldPosition;
-        List<ListEntity> listsToMove = null;
-
-        // if position difference is 0 that means it's the same list and no changes should be made
-        if (positionDifference == 1 || positionDifference == -1) {
-            // if difference is 1 or -1 the lists are adjacent and only need to swap position
-            target.position = oldPosition;
-            listsToMove = new ArrayList<>();
-            listsToMove.add(target);
-        } else if (positionDifference > 1) {
-            // if difference is positive the list needs to move up towards the end of the array
-            // and all other lists in between it and the target need to move 1 back
-            listsToMove = findListsInPositionRange(oldPosition + 1, newPosition);
-            for (ListEntity list : listsToMove) {
-                list.position--;
+        MovePositionHelper<ListEntity> helper = new MovePositionHelper<ListEntity>(listToMove, target) {
+            @Override
+            public List<ListEntity> findItemsToMove(int startOfRange, int endOfRange) {
+                return findListsInPositionRange(startOfRange, endOfRange);
             }
-        } else if (positionDifference < -1) {
-            // if difference is negative the list needs to move back towards the beginning of the
-            // array and all lists in between it and the target need to move 1 forward
-            listsToMove = findListsInPositionRange(newPosition, oldPosition - 1);
-            for (ListEntity list : listsToMove) {
-                list.position++;
-            }
-        }
-
-        if (listsToMove != null) {
-            listToMove.position = newPosition;
-            listsToMove.add(listToMove);
-            update(listsToMove);
+        };
+        List<ListEntity> itemsToMove = helper.getItemsWithAdjustedPositions();
+        if (itemsToMove != null) {
+            update(itemsToMove);
         }
     }
 
@@ -92,7 +71,7 @@ public abstract class ListDao {
     /**
      * the listIds are lists about to be deleted, the shows in the list have to be deleted first,
      * afterwards the call to delete lists will be made(both calls are done in a @Transaction)
-     *
+     * <p>
      * in this call: delete all shows joined to the given listIds
      * AND are not also joined to a list that is not about to be deleted.
      */
