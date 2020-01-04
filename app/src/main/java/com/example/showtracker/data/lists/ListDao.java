@@ -44,15 +44,20 @@ public abstract class ListDao {
 
         // if position difference is 0 that means it's the same list and no changes should be made
         if (positionDifference == 1 || positionDifference == -1) {
+            // if difference is 1 or -1 the lists are adjacent and only need to swap position
             target.position = oldPosition;
             listsToMove = new ArrayList<>();
             listsToMove.add(target);
         } else if (positionDifference > 1) {
+            // if difference is positive the list needs to move up towards the end of the array
+            // and all other lists in between it and the target need to move 1 back
             listsToMove = findListsInPositionRange(oldPosition + 1, newPosition);
             for (ListEntity list : listsToMove) {
                 list.position--;
             }
         } else if (positionDifference < -1) {
+            // if difference is negative the list needs to move back towards the beginning of the
+            // array and all lists in between it and the target need to move 1 forward
             listsToMove = findListsInPositionRange(newPosition, oldPosition - 1);
             for (ListEntity list : listsToMove) {
                 list.position++;

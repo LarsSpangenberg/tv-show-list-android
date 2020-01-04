@@ -74,8 +74,8 @@ public class ApplicationModule {
 
     @Singleton
     @Provides
-    TagsRepository getTagsRepository(AppDatabase db) {
-        return new TagsRepository(db);
+    TagsRepository getTagsRepository(AppDatabase db, ThreadPoolExecutor backgroundThread) {
+        return new TagsRepository(db, backgroundThread);
     }
 
     @Provides
