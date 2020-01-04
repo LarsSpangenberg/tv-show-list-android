@@ -1,183 +1,112 @@
 package com.example.showtracker.data.shows;
 
-import android.os.*;
-
-import androidx.annotation.*;
 import androidx.lifecycle.*;
 
-import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.data.*;
 import com.example.showtracker.data.shows.entities.*;
+import com.example.showtracker.screens.common.utils.*;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 public class ShowsRepository {
-    private static final String TAG = "ShowsRepository";
     private ShowDao showDao;
+    private ThreadPoolExecutor backgroundThread;
 
-    public ShowsRepository(@NonNull AppDatabase db) {
+    public ShowsRepository(AppDatabase db, ThreadPoolExecutor backgroundThread) {
         this.showDao = db.showDao();
-
+        this.backgroundThread = backgroundThread;
     }
 
     public LiveData<List<ShowWithTags>> getShowsInList(String listId, ShowsListFilters filters) {
-//        List<Show.Status> statusFilters = filters.getStatusFilters();
         List<Integer> statusFilters = filters.getFilteredStatusCodes();
         List<String> tagFilters = filters.getFilteredTagIds();
+        boolean filteringByStatus = !statusFilters.isEmpty();
+        boolean filteringByTags = !tagFilters.isEmpty();
 
-        if (!statusFilters.isEmpty()) {
-            if (!tagFilters.isEmpty()) {
-                return this.showDao.getShowsInListFiltered(listId, statusFilters, tagFilters);
+        if (filteringByStatus) {
+            if (filteringByTags) {
+                return showDao.getShowsInListFiltered(listId, statusFilters, tagFilters);
             }
-            return this.showDao.getShowsInListByStatus(listId, statusFilters);
-        } else if (!tagFilters.isEmpty()) {
-            return this.showDao.getShowsInListByTag(listId,tagFilters);
+            return showDao.getShowsInListByStatus(listId, statusFilters);
+        } else if (filteringByTags) {
+            return showDao.getShowsInListByTag(listId,tagFilters);
         }
         return getShowsInList(listId);
     }
 
     public LiveData<List<ShowWithTags>> getShowsInList(String listId) {
-        return this.showDao.getShowsInList(listId);
+        return showDao.getShowsInList(listId);
     }
 
     public LiveData<ShowDetails> getShowDetails(String showId) {
-        return this.showDao.getShowDetails(showId);
+        return showDao.getShowDetails(showId);
     }
 
-    public void createNewShow(Show show, String listId) {
-        new UpdateOrInsertAsync(this.showDao, listId).execute(show);
+    public void newShow(final Show show, final String listId) {
+        backgroundThread.execute(new Runnable() {
+            @Override
+            public void run() {
+                showDao.addShowWithListId(show, listId);
+            }
+        });
     }
 
-    public void updateShow(Show show) {
-        new UpdateOrInsertAsync(this.showDao).execute(show);
+    public void updateShow(final Show show) {
+        backgroundThread.execute(new Runnable() {
+            @Override
+            public void run() {
+                showDao.updateShow(show);
+            }
+        });
     }
 
-//    public void deleteShowsFromList(String listId, Show... shows) {
-//        new RemoveFromListAsync(this.showDao, listId).execute(shows);
-//    }
-//
-//    public void deleteShowsFromList(String listId, List<Show> shows) {
-//        deleteShowsFromList(listId, shows.toArray(new Show[0]));
-//    }
-
-    public void deleteShowFromList(String listId, List<String> showIds) {
-        new RemoveFromListAsync(this.showDao,listId).execute(showIds.toArray(new String[0]));
+    public void deleteShowFromList(final String listId, List<String> showIds) {
+        final String[] showIdsArray = showIds.toArray(new String[0]);
+        backgroundThread.execute(new Runnable() {
+            @Override
+            public void run() {
+                showDao.deleteShowFromList(listId, showIdsArray);
+            }
+        });
     }
 
-    public void saveShowsLists(List<String> listIds, String showId) {
+    public void moveShow(final Show toMove, final Show target) {
+        backgroundThread.execute(new Runnable() {
+            @Override
+            public void run() {
+                showDao.moveShowPosition(toMove, target);
+            }
+        });
+    }
+
+    public void saveShowsLists(final String showId, List<String> listIds) {
         int listCount = listIds.size();
-        String[] listIdArray = new String[listCount];
+        final String[] listIdsArray = new String[listCount];
         for (int i = 0; i < listCount; i++) {
-            listIdArray[i] = listIds.get(i);
+            listIdsArray[i] = listIds.get(i);
         }
 
-        new SaveShowsListsAsync(this.showDao, showId).execute(listIdArray);
+        backgroundThread.execute(new Runnable() {
+            @Override
+            public void run() {
+                showDao.updateShowsLists(showId, listIdsArray);
+            }
+        });
     }
 
-    public void saveShowsTags(List<String> tagIds, String showId) {
+    public void saveShowsTags(final String showId, List<String> tagIds) {
         int tagCount = tagIds.size();
-        String[] tagJoinArray = new String[tagCount];
+        final String[] tagIdsArray = new String[tagCount];
         for (int i = 0; i < tagCount; i++) {
-            tagJoinArray[i] = tagIds.get(i);
+            tagIdsArray[i] = tagIds.get(i);
         }
 
-        new SaveShowTagsAsync(this.showDao, showId).execute(tagJoinArray);
-    }
-
-    public void moveShow(Show toMove, Show target) {
-        Show[] showsToMove = new Show[2];
-        showsToMove[0] = toMove;
-        showsToMove[1] = target;
-        new MoveShowPositionAsync(this.showDao).execute(showsToMove);
-    }
-
-    private static class UpdateOrInsertAsync extends AsyncTask<Show, Void, Void> {
-
-        private ShowDao showDao;
-        private String listId;
-
-        UpdateOrInsertAsync(ShowDao showDao) {
-            this.showDao = showDao;
-        }
-
-        UpdateOrInsertAsync(ShowDao showDao, String listId) {
-            this.showDao = showDao;
-            this.listId = listId;
-        }
-
-        @Override
-        protected Void doInBackground(Show... shows) {
-            if (listId == null) {
-                this.showDao.updateShow(shows[0]);
-            } else {
-                this.showDao.addShowWithListId(shows[0], this.listId);
+        backgroundThread.execute(new Runnable() {
+            @Override
+            public void run() {
+                showDao.updateShowsTags(showId, tagIdsArray);
             }
-            return null;
-        }
+        });
     }
-
-    private static class RemoveFromListAsync extends AsyncTask<String, Void, Void> {
-        private ShowDao showDao;
-        private String listId;
-
-        RemoveFromListAsync(ShowDao showDao, String listId) {
-            this.showDao = showDao;
-            this.listId = listId;
-        }
-
-        @Override
-        protected Void doInBackground(String... showIds) {
-            this.showDao.deleteShowFromList(this.listId, showIds);
-            return null;
-        }
-    }
-
-    private static class SaveShowTagsAsync extends AsyncTask<String, Void, Void> {
-        private ShowDao showDao;
-        private String showId;
-
-        SaveShowTagsAsync(ShowDao showDao, String showId) {
-            this.showDao = showDao;
-            this.showId = showId;
-        }
-
-        @Override
-        protected Void doInBackground(String... tagIds) {
-            this.showDao.saveShowsTags(this.showId, tagIds);
-            return null;
-        }
-    }
-
-    private static class SaveShowsListsAsync extends AsyncTask<String, Void, Void> {
-        private ShowDao showDao;
-        private String showId;
-
-        SaveShowsListsAsync(ShowDao showDao, String showId) {
-            this.showDao = showDao;
-            this.showId = showId;
-        }
-
-        @Override
-        protected Void doInBackground(String... listIds) {
-            this.showDao.saveShowsLists(this.showId, listIds);
-            return null;
-        }
-    }
-
-    private static class MoveShowPositionAsync extends AsyncTask<Show, Void, Void> {
-        private ShowDao showDao;
-
-        MoveShowPositionAsync(ShowDao showDao) {
-            this.showDao = showDao;
-        }
-
-        @Override
-        protected Void doInBackground(Show... showsToMove) {
-            if (showsToMove.length == 2) {
-                this.showDao.moveShowPosition(showsToMove[0], showsToMove[1]);
-            }
-            return null;
-        }
-    }
-
 }

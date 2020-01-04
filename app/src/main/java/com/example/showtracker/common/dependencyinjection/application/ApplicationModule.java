@@ -68,8 +68,8 @@ public class ApplicationModule {
 
     @Singleton
     @Provides
-    ShowsRepository getShowsRepository(AppDatabase db) {
-        return new ShowsRepository(db);
+    ShowsRepository getShowsRepository(AppDatabase db, ThreadPoolExecutor backgroundThread) {
+        return new ShowsRepository(db, backgroundThread);
     }
 
     @Singleton

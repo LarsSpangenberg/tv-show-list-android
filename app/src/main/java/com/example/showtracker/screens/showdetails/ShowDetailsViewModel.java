@@ -20,10 +20,7 @@ public class ShowDetailsViewModel extends ViewModel {
     private LiveData<ShowDetails> showDetails;
     private MediatorLiveData<ShowDetailsData> showDetailsComplete;
 
-    public ShowDetailsViewModel(
-        @NonNull MyApplication application,
-        String showId
-    ) {
+    public ShowDetailsViewModel(MyApplication application, @Nullable String showId) {
         ApplicationComponent appComponent = application.getApplicationComponent();
 
         showsRepository = appComponent.getShowsRepository();
@@ -40,12 +37,12 @@ public class ShowDetailsViewModel extends ViewModel {
     }
 
     public void createNewShow(Show show, List<String> listIds, List<String> tagIds) {
-        this.showsRepository.createNewShow(show, listIds.get(0));
+        this.showsRepository.newShow(show, listIds.get(0));
         if (listIds.size() > 1) {
-            this.showsRepository.saveShowsLists(listIds, show.id);
+            this.showsRepository.saveShowsLists(show.id, listIds);
         }
         if (tagIds.size() > 0) {
-            this.showsRepository.saveShowsTags(tagIds, show.id);
+            this.showsRepository.saveShowsTags(show.id, tagIds);
         }
     }
 
@@ -53,12 +50,12 @@ public class ShowDetailsViewModel extends ViewModel {
         this.showsRepository.updateShow(show);
     }
 
-//    public void saveShowsLists(String showId, String listId) {
+//    public void updateShowsLists(String showId, String listId) {
 //        this.showsRepository.addShowToList(listId, showId);
 //    }
 
     public void saveShowsLists(String showId, List<String> listIds) {
-        this.showsRepository.saveShowsLists(listIds, showId);
+        this.showsRepository.saveShowsLists(showId, listIds);
     }
 
 //    public void deleteShowsFromList(Show show, String listId) {
@@ -66,10 +63,10 @@ public class ShowDetailsViewModel extends ViewModel {
 //    }
 
     public void saveShowsTags(String showId, List<String> tagIds) {
-        this.showsRepository.saveShowsTags(tagIds, showId);
+        this.showsRepository.saveShowsTags(showId, tagIds);
     }
 
-    public void setDetailsLiveData(final String showId) {
+    public void setDetailsLiveData(@Nullable final String showId) {
         // if no showId was passed then a new show is being created, access to all tags and lists is
         // still needed for ShowDetailsActivity UI, use this method to reinitialize LiveData of
         // newly created Show with its id

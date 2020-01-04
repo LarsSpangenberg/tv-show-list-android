@@ -46,8 +46,8 @@ public class DataBaseInitializer {
 
         ListShowJoin join = new ListShowJoin(list.id, show.id);
         db.showDao().addShowToList(join);
-        Log.d(TAG, "saveShowsLists: new join : " + join.toString());
-        Log.d(TAG, "saveShowsLists: " + show.title + " added to list " + list.name);
+        Log.d(TAG, "updateShowsLists: new join : " + join.toString());
+        Log.d(TAG, "updateShowsLists: " + show.title + " added to list " + list.name);
 
     }
 

@@ -75,7 +75,6 @@ public abstract class ShowDao {
         List<String> tagFilter
     );
 
-
     @Transaction
     @Query("SELECT * FROM shows WHERE id = :showId")
     public abstract LiveData<ShowDetails> getShowDetails(String showId);
@@ -87,9 +86,6 @@ public abstract class ShowDao {
            + "WHERE position >= :startPosition "
            + "AND position <= :endPosition")
     abstract List<Show> findShowsInPositionRange(int startPosition, int endPosition);
-
-//    @Query("SELECT * FROM shows WHERE position >= :startPosition")
-//    abstract List<Show> findShowsInPositionRange(int startPosition);
 
     @Query(
         "SELECT DISTINCT showId "
@@ -141,7 +137,7 @@ public abstract class ShowDao {
      * listIds array
      **/
     @Transaction
-    public void saveShowsLists(String showId, String... listIds) {
+    public void updateShowsLists(String showId, String... listIds) {
         List<ListShowJoin> showsLists = new ArrayList<>();
         for (String listId : listIds) {
             showsLists.add(new ListShowJoin(listId, showId));
@@ -156,7 +152,7 @@ public abstract class ShowDao {
      * tagIds array
      **/
     @Transaction
-    public void saveShowsTags(String showId, String... tagIds) {
+    public void updateShowsTags(String showId, String... tagIds) {
         List<ShowTagJoin> showsTags = new ArrayList<>();
         for (String tagId : tagIds) {
             showsTags.add(new ShowTagJoin(showId, tagId));
@@ -167,7 +163,7 @@ public abstract class ShowDao {
 
     /**
      * Use this method to addTag a new show to db
-     * <p>
+     *
      * All shows also automatically addTag to all the lists whose id is in the list_synced_to_all
      * table
      **/
@@ -187,8 +183,8 @@ public abstract class ShowDao {
     /**
      * either sync a list to all shows by putting its id lists_synced_to_all_shows and joining every
      * show in the database to the list OR if it already exists in lists_synced_to_all_shows,
-     * remove it from that table (and do nothing to the shows already in the list, which should be
-     * all of them)
+     * remove it from that table, effectively turning off the sync, and do nothing to all shows
+     * already in the list.
      **/
     @Transaction
     public void handleAllShowsSyncToList(String listId) {
@@ -215,15 +211,20 @@ public abstract class ShowDao {
 
         // if position difference is 0 that means it's the same show and no changes should be made
         if (positionDifference == 1 || positionDifference == -1) {
+            // if difference is 1 or -1 the shows are adjacent and only need to swap position
             showInDesiredPosition.position = oldPosition;
             showsToMove = new ArrayList<>();
             showsToMove.add(showInDesiredPosition);
         } else if (positionDifference > 1) {
+            // if difference is positive the show needs to move up towards the end of the array
+            // and all other shows in between it and the target need to move 1 back
             showsToMove = findShowsInPositionRange(oldPosition + 1, newPosition);
             for (Show show : showsToMove) {
                 show.position--;
             }
         } else if (positionDifference < -1) {
+            // if difference is negative the show needs to move back towards the beginning of the
+            // array and all shows in between it and the target need to move 1 forward
             showsToMove = findShowsInPositionRange(newPosition, oldPosition - 1);
             for (Show show : showsToMove) {
                 show.position++;
@@ -239,7 +240,8 @@ public abstract class ShowDao {
 
     /**
      * if show does not exist in any other list, the show will be deleted from the database,
-     * otherwise it is removed only from this list
+     * otherwise the show is only removed from this list while the other lists will still keep a
+     * reference to this show
      **/
     @Transaction
     public void deleteShowFromList(String listId, String... showIds) {
@@ -272,6 +274,8 @@ public abstract class ShowDao {
 
     @Query("DELETE FROM shows WHERE id IN (:showIds)")
     public abstract void delete(String... showIds);
+
+    // --------- reset the shows table for testing -------------------------------------------------
 
     @Query("DELETE FROM shows")
     abstract void deleteAll();
