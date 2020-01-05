@@ -1,42 +1,40 @@
-package com.example.showtracker.data.common;
+package com.example.showtracker.data.common.utils;
 
 import androidx.annotation.*;
 
+import com.example.showtracker.data.common.interfaces.*;
+
 import java.util.*;
 
-public abstract class MovePositionHelper<T extends ListItem> {
-
-    private T toMove;
-    private T target;
-    private final int oldPosition;
-    private final int newPosition;
-    private int positionDifference;
+public abstract class DragAndDropPositionAdjuster<T extends ListItem> {
     private List<T> itemsToMove = null;
 
-    public MovePositionHelper(T toMove, T target) {
-        this.toMove = toMove;
-        this.target = target;
-        oldPosition = toMove.getPosition();
-        newPosition = target.getPosition();
-        positionDifference = newPosition - oldPosition;
-    }
-
     /**
-     * items to move should be a range of all the items that will need their position incremented or
-     * decremented when dragging and dropping. This range should not include the item that is being
-     * dragged.
+     * when this class is instantiated this method should be delegated to the DAO and simply return
+     * every item within the range of the given start position and end position.
+     *
+     * It is assumed these items already have a position field with the correct value in order.
      **/
     public abstract List<T> findItemsToMove(int startOfRange, int endOfRange);
 
     /**
+     * adjusts the position of the dragged item to the target position and increments or decrements
+     * every other item within the range of the target and the old position as appropriate.
+     *
      * returns null when positions are identical
      * */
     @Nullable
-    public List<T> getItemsWithAdjustedPositions() {
+    public List<T> adjustPositions(T toMove, T target) {
+        int oldPosition = toMove.getPosition();
+        int newPosition = target.getPosition();
+        int positionDifference = newPosition - oldPosition;
+
         // if position difference is 0 that means it's the same item and no changes should be made
         if (positionDifference == 1 || positionDifference == -1) {
             // if difference is 1 or -1 the items are adjacent and only need to swap position
-            swapAdjacentPositions();
+            target.setPosition(oldPosition);
+            itemsToMove = new ArrayList<>();
+            itemsToMove.add(target);
         } else if (positionDifference > 1) {
             // if difference is positive the item needs to move up towards the end of the array
             // and all other items in between it and the target need to move 1 back
@@ -59,11 +57,5 @@ public abstract class MovePositionHelper<T extends ListItem> {
             itemsToMove.add(toMove);
         }
         return itemsToMove;
-    }
-
-    private void swapAdjacentPositions() {
-        target.setPosition(oldPosition);
-        itemsToMove = new ArrayList<>();
-        itemsToMove.add(target);
     }
 }

@@ -3,7 +3,7 @@ package com.example.showtracker.data.shows.entities;
 import androidx.annotation.*;
 import androidx.room.*;
 
-import com.example.showtracker.data.common.*;
+import com.example.showtracker.data.common.interfaces.*;
 import com.example.showtracker.data.common.typeconverters.*;
 
 import java.util.*;

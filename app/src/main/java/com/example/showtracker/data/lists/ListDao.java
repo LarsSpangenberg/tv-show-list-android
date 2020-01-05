@@ -3,8 +3,8 @@ package com.example.showtracker.data.lists;
 import androidx.lifecycle.*;
 import androidx.room.*;
 
-import com.example.showtracker.data.common.*;
 import com.example.showtracker.data.common.joins.*;
+import com.example.showtracker.data.common.utils.*;
 import com.example.showtracker.data.lists.entities.*;
 
 import java.util.*;
@@ -38,13 +38,13 @@ public abstract class ListDao {
 
     @Transaction
     public void moveListPosition(ListEntity listToMove, ListEntity target) {
-        MovePositionHelper<ListEntity> helper = new MovePositionHelper<ListEntity>(listToMove, target) {
+        List<ListEntity> itemsToMove = new DragAndDropPositionAdjuster<ListEntity>() {
             @Override
             public List<ListEntity> findItemsToMove(int startOfRange, int endOfRange) {
                 return findListsInPositionRange(startOfRange, endOfRange);
             }
-        };
-        List<ListEntity> itemsToMove = helper.getItemsWithAdjustedPositions();
+        }.adjustPositions(listToMove, target);
+
         if (itemsToMove != null) {
             update(itemsToMove);
         }

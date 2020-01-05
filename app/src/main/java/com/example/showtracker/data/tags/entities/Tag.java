@@ -3,7 +3,7 @@ package com.example.showtracker.data.tags.entities;
 import androidx.annotation.*;
 import androidx.room.*;
 
-import com.example.showtracker.data.common.*;
+import com.example.showtracker.data.common.interfaces.*;
 
 import java.io.*;
 import java.util.*;

@@ -3,8 +3,8 @@ package com.example.showtracker.data.shows;
 import androidx.lifecycle.*;
 import androidx.room.*;
 
-import com.example.showtracker.data.common.*;
 import com.example.showtracker.data.common.joins.*;
+import com.example.showtracker.data.common.utils.*;
 import com.example.showtracker.data.shows.entities.*;
 
 import java.util.*;
@@ -205,14 +205,13 @@ public abstract class ShowDao {
 
     @Transaction
     public void moveShowPosition(Show showToMove, Show target) {
-        MovePositionHelper<Show> helper = new MovePositionHelper<Show>(showToMove, target) {
+        List<Show> itemsToMove = new DragAndDropPositionAdjuster<Show>() {
             @Override
             public List<Show> findItemsToMove(int startOfRange, int endOfRange) {
                 return findShowsInPositionRange(startOfRange, endOfRange);
             }
-        };
+        }.adjustPositions(showToMove, target);
 
-        List<Show> itemsToMove = helper.getItemsWithAdjustedPositions();
         if (itemsToMove != null) {
             updateShow(itemsToMove);
         }

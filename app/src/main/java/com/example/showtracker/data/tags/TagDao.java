@@ -3,8 +3,8 @@ package com.example.showtracker.data.tags;
 import androidx.lifecycle.*;
 import androidx.room.*;
 
-import com.example.showtracker.data.common.*;
 import com.example.showtracker.data.common.joins.*;
+import com.example.showtracker.data.common.utils.*;
 import com.example.showtracker.data.tags.entities.*;
 
 import java.util.*;
@@ -42,14 +42,13 @@ public abstract class TagDao {
 
     @Transaction
     public void moveTagPosition(Tag tagToMove, Tag target) {
-        MovePositionHelper<Tag> helper =
-            new MovePositionHelper<Tag>(tagToMove, target) {
-                @Override
-                public List<Tag> findItemsToMove(int startOfRange, int endOfRange) {
-                    return findTagsInPositionRange(startOfRange, endOfRange);
-                }
-            };
-        List<Tag> itemsToMove =  helper.getItemsWithAdjustedPositions();
+        List<Tag> itemsToMove = new DragAndDropPositionAdjuster<Tag>() {
+            @Override
+            public List<Tag> findItemsToMove(int startOfRange, int endOfRange) {
+                return findTagsInPositionRange(startOfRange, endOfRange);
+            }
+        }.adjustPositions(tagToMove, target);
+
         if (itemsToMove != null) {
             update(itemsToMove);
         }

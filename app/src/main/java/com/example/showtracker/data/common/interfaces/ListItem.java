@@ -1,4 +1,4 @@
-package com.example.showtracker.data.common;
+package com.example.showtracker.data.common.interfaces;
 
 public interface ListItem {
     String getId();
