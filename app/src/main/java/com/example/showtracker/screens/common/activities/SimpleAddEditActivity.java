@@ -15,9 +15,9 @@ import java.io.*;
 
 import static android.content.Intent.*;
 
-public class AddEditActivity extends BaseActivity {
+public class SimpleAddEditActivity extends BaseActivity {
     public static final String EXTRA_REPLY =
-        "com.example.showtracker.view.AddEditActivity.REPLY";
+        "com.example.showtracker.view.SimpleAddEditActivity.REPLY";
     public static final String ITEM_TO_EDIT = "ITEM_TO_EDIT";
     public static final String ITEM_NAME = "ITEM_NAME";
     public static final String ITEM_TYPE = "ITEM_TYPE";

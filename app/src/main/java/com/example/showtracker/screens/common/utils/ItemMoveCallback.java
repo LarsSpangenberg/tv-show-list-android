@@ -73,9 +73,9 @@ public class ItemMoveCallback extends ItemTouchHelper.Callback {
         @NonNull RecyclerView.ViewHolder viewHolder
     ) {
         Log.d(TAG, "clearView: position " + viewHolder.getAdapterPosition());
-        if (this.currentPosition != -1) {
-            this.contract.onDrop(this.currentPosition, viewHolder.getAdapterPosition());
-            this.currentPosition = -1;
+        if (currentPosition != -1) {
+            contract.onDrop(currentPosition, viewHolder.getAdapterPosition());
+            currentPosition = -1;
         }
         super.clearView(recyclerView, viewHolder);
     }

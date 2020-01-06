@@ -22,13 +22,16 @@ import com.google.android.material.snackbar.*;
 
 import java.util.*;
 
-import static com.example.showtracker.screens.common.activities.AddEditActivity.*;
+import static com.example.showtracker.screens.common.activities.SimpleAddEditActivity.*;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_CUSTOM;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_NAME;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.TAG_SORT_MODE;
 //import static com.example.showtracker.views.AddEditTagActivity.*;
 
 public class TagListActivity extends BaseListActivity
     implements TagListRVAdapter.TagRVEventListener {
     public static final int ACTIVITY_REQUEST_CODE_EDIT_TAG = 1;
-    public static final String TAG_SORT_MODE = "TAG_SORT_MODE";
+
 
     private TagListViewModel viewModel;
     private TagListRVAdapter adapter;
@@ -61,7 +64,7 @@ public class TagListActivity extends BaseListActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(TagListActivity.this, AddEditActivity.class);
+                Intent intent = new Intent(TagListActivity.this, SimpleAddEditActivity.class);
                 intent.putExtra(ITEM_TYPE, TAG_ITEM);
                 startActivityForResult(intent, ACTIVITY_REQUEST_CODE_EDIT_TAG);
             }
@@ -128,7 +131,7 @@ public class TagListActivity extends BaseListActivity
 
     @Override
     public void onTagClick(@NonNull Tag tag) {
-        Intent intent = new Intent(this, AddEditActivity.class);
+        Intent intent = new Intent(this, SimpleAddEditActivity.class);
         intent.putExtra(ITEM_TO_EDIT, tag);
         intent.putExtra(ITEM_NAME, tag.name);
         intent.putExtra(ITEM_TYPE, TAG_ITEM);
@@ -167,7 +170,7 @@ public class TagListActivity extends BaseListActivity
                 this.adapter.sortItems(SORT_BY_NAME);
                 break;
             case SORT_BY_CUSTOM:
-                prefsEditor.putInt(TAG_SORT_MODE, SORT_BY_CUSTOM);
+                prefsEditor.putInt(TAG_SORT_MODE, SORT_BY_CUSTOM).apply();
                 this.adapter.sortItems(SORT_BY_CUSTOM);
                 break;
         }

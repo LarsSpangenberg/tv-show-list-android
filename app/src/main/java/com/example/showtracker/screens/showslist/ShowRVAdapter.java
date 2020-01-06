@@ -13,14 +13,13 @@ import androidx.annotation.*;
 import androidx.recyclerview.widget.*;
 
 import com.example.showtracker.*;
-import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.data.shows.entities.*;
 import com.example.showtracker.data.tags.entities.*;
+import com.example.showtracker.screens.common.utils.*;
 
 import java.util.*;
 
-import static com.example.showtracker.screens.common.activities.BaseListActivity.*;
-import static com.example.showtracker.screens.showslist.ShowsListActivity.*;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 
 public class ShowRVAdapter extends RecyclerView.Adapter<ShowRVAdapter.ShowViewHolder> implements
     ItemMoveCallback.ItemTouchListener {
@@ -85,7 +84,7 @@ public class ShowRVAdapter extends RecyclerView.Adapter<ShowRVAdapter.ShowViewHo
         Show toMove = this.shows.get(fromPosition).show;
         Show target = this.shows.get(toPosition).show;
         boolean itemMoveSuccess = this.eventListener.onItemMoved(toMove, target);
-        if (!itemMoveSuccess) notifyItemChanged(fromPosition);
+        if (!itemMoveSuccess) notifyDataSetChanged();
     }
 
     public void setShows(List<ShowWithTags> shows) {
@@ -134,10 +133,15 @@ public class ShowRVAdapter extends RecyclerView.Adapter<ShowRVAdapter.ShowViewHo
                 break;
         }
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.context);
+        Log.d(TAG, "sortItems: pref " + prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM));
+        Log.d(TAG, "sortItems: sort by " + sortBy);
+
         if (comparator != null) {
             Collections.sort(this.shows, comparator);
             notifyDataSetChanged();
         }
+
     }
 
     private String showsTagsToString(List<String> tagIds) {
@@ -181,6 +185,7 @@ public class ShowRVAdapter extends RecyclerView.Adapter<ShowRVAdapter.ShowViewHo
             final ShowRVEventListener listener
         ) {
             Log.d(TAG, "bind: " + show.toString());
+            Log.d(TAG, "bind: position " + show.position);
             Resources resources = this.context.getResources();
             this.itemView.setSelected(isSelected);
             this.title.setText(show.title);

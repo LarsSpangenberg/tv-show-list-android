@@ -7,99 +7,88 @@ import android.util.*;
 import android.view.*;
 import android.widget.*;
 
-import androidx.annotation.*;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.*;
-import androidx.recyclerview.widget.*;
 
 import com.example.showtracker.R;
-import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.data.lists.entities.*;
 import com.example.showtracker.screens.common.activities.*;
+import com.example.showtracker.screens.common.utils.*;
+import com.example.showtracker.screens.common.viewmodel.*;
 import com.example.showtracker.screens.showslist.*;
 import com.example.showtracker.screens.tags.*;
-import com.example.showtracker.screens.common.viewmodel.*;
 import com.google.android.material.floatingactionbutton.*;
 import com.google.android.material.snackbar.*;
 
 import java.util.*;
 
 import static com.example.showtracker.data.lists.entities.ListEntity.*;
-import static com.example.showtracker.screens.common.activities.AddEditActivity.*;
+import static com.example.showtracker.screens.common.activities.SimpleAddEditActivity.*;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 
-public class MainActivity extends BaseListActivity
-    implements ListOfShowsRVAdapter.ListsRVEventListener {
+public class MainActivity extends BaseActivity
+    implements MainViewMvc.Listener {
+
     public static final int ACTIVITY_REQUEST_CODE_EDIT_LIST = 1;
     private static final String TAG = "MainActivity";
-    public static final String LIST_SORT_MODE = "LIST_SORT_MODE";
 
-    private ListOfShowsRVAdapter adapter;
     private MainViewModel viewModel;
+    private MainViewMvc viewMvc;
+    private ListItemSelectionHandler selectionHandler = new ListItemSelectionHandler();
+
+    private List<ListWithShows> allLists = new ArrayList<>();
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        viewMvc = new MainViewMvc(
+            LayoutInflater.from(this),
+            prefs,
+            selectionHandler,
+            null
+        );
+        viewMvc.registerListener(this);
 
         ViewModelFactory viewModelFactory = getPresentationComponent().getViewModelFactory();
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
-        adapter = new ListOfShowsRVAdapter(this, this);
-        RecyclerView recyclerView = findViewById(R.id.lists_list);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        ItemTouchHelper.Callback callback = new ItemMoveCallback(adapter);
-        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(recyclerView);
 
         subscribeUILists();
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddEditActivity.class);
-                intent.putExtra(ITEM_TYPE, LIST_ITEM);
-                startActivityForResult(intent, ACTIVITY_REQUEST_CODE_EDIT_LIST);
-            }
-        });
+        setContentView(viewMvc.getRootView());
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setFab();
     }
 
     @Override
-    public void onListClick(@NonNull ListWithShows list) {
+    protected void onStop() {
+        super.onStop();
+        viewMvc.unregisterListener(this);
+    }
+
+    @Override
+    public void onListClick(ListWithShows list) {
         Intent intent = new Intent(this, ShowsListActivity.class);
-        intent.putExtra(LIST_ID, list.list.id);
-        intent.putExtra(ListEntity.class.getSimpleName(), list.list);
+        intent.putExtra(LIST_ID, list.getId());
+        intent.putExtra(ListEntity.class.getSimpleName(), list.getList());
         startActivity(intent);
     }
 
-
     @Override
-    public void onListLongClick(@NonNull ListWithShows list, int position) {
-        Log.d(TAG, "onListLongClick: started");
-        handleSelection(list.list.id);
-        this.adapter.setSelection(getSelection());
-        this.adapter.notifyItemChanged(position);
-    }
-
-    @Override
-    public boolean onItemMoved(@NonNull ListEntity toMove, @NonNull ListEntity target) {
+    public boolean onListDragAndDrop(ListEntity toMove, ListEntity target) {
         boolean itemMoved = false;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int sortMode = prefs.getInt(LIST_SORT_MODE, SORT_BY_CUSTOM);
         if (sortMode == SORT_BY_CUSTOM) {
-            this.viewModel.moveList(toMove, target);
+            viewModel.moveList(toMove, target);
             itemMoved = true;
         }
-        unselectItem(toMove.id);
-//        resetSelection();
-        this.adapter.setSelection(getSelection());
-//        this.adapter.resetSelection();
-        Log.d(TAG, "onItemMoved: " + getSelection().toString());
+        selectionHandler.unselectItem(toMove.id);
+        Log.d(TAG, "onListDragAndDrop: " + selectionHandler.getSelection().toString());
         return itemMoved;
     }
 
@@ -107,8 +96,8 @@ public class MainActivity extends BaseListActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        setDeleteButton(menu.findItem(R.id.main_menu_delete_selection));
-        setEditButton(menu.findItem(R.id.main_menu_rename_list));
+        selectionHandler.setDeleteButton(menu.findItem(R.id.main_menu_delete_selection));
+        selectionHandler.setEditButton(menu.findItem(R.id.main_menu_rename_list));
         return true;
     }
 
@@ -123,10 +112,10 @@ public class MainActivity extends BaseListActivity
                 editSelectedList();
                 return true;
             case R.id.main_menu_sort_by_name:
-                sortItems(SORT_BY_NAME);
+                onSortItems(SORT_BY_NAME);
                 return true;
             case R.id.main_menu_sort_by_custom:
-                sortItems(SORT_BY_CUSTOM);
+                onSortItems(SORT_BY_CUSTOM);
                 return true;
             case R.id.main_menu_tag_list:
                 startTagList();
@@ -166,42 +155,35 @@ public class MainActivity extends BaseListActivity
                     .show();
             }
 
-            resetSelection();
-            this.adapter.resetSelection();
+            selectionHandler.resetSelection();
         }
     }
 
-
-    private void sortItems(int sortBy) {
-        SharedPreferences.Editor prefsEditor = PreferenceManager
-            .getDefaultSharedPreferences(this)
-            .edit();
-        switch (sortBy) {
-            case SORT_BY_NAME:
-                prefsEditor.putInt(LIST_SORT_MODE, SORT_BY_NAME).apply();
-                this.adapter.sortItems(SORT_BY_NAME);
-                break;
-            case SORT_BY_CUSTOM:
-                prefsEditor.putInt(LIST_SORT_MODE, SORT_BY_CUSTOM);
-                this.adapter.sortItems(SORT_BY_CUSTOM);
-                break;
-        }
+    @Override
+    public void onSortItems(int sortBy) {
+        viewMvc.sortItems(sortBy);
     }
 
     private void deleteSelectedLists() {
-        Log.d(TAG, "deleteSelectedLists: deleting " + getSelection().size() + " items");
-        viewModel.deleteSelection(getSelection());
-        resetSelection();
+        Log.d(TAG, "deleteSelectedLists: deleting " + selectionHandler.getSelection().size() + " items");
+        viewModel.deleteSelection(selectionHandler.getSelection());
+        selectionHandler.resetSelection();
     }
 
     private void editSelectedList() {
-        if (getSelection().size() != 1) return;
+        if (selectionHandler.getSelection().size() != 1) return;
 
-        String listId = getSelection().get(0);
-        ListEntity list = this.adapter.findListById(listId);
+        String listId = selectionHandler.getSelection().get(0);
+        ListEntity list = null;
+        for (ListWithShows l : allLists) {
+            if (l.getId().equals(listId)) {
+                list = l.getList();
+                break;
+            }
+        }
 
         if (list != null) {
-            Intent intent = new Intent(this, AddEditActivity.class);
+            Intent intent = new Intent(this, SimpleAddEditActivity.class);
             intent.putExtra(ITEM_TO_EDIT, list);
             intent.putExtra(ITEM_NAME, list.name);
             intent.putExtra(ITEM_TYPE, LIST_ITEM);
@@ -225,11 +207,24 @@ public class MainActivity extends BaseListActivity
         }
     }
 
+    private void setFab() {
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SimpleAddEditActivity.class);
+                intent.putExtra(ITEM_TYPE, LIST_ITEM);
+                startActivityForResult(intent, ACTIVITY_REQUEST_CODE_EDIT_LIST);
+            }
+        });
+    }
+
     private void subscribeUILists() {
         viewModel.getAllListsWithShowId().observe(this, new Observer<List<ListWithShows>>() {
             @Override
             public void onChanged(List<ListWithShows> lists) {
-                adapter.setLists(lists);
+                viewMvc.bindLists(lists);
+                allLists = lists;
                 handleNoResults(lists.isEmpty());
             }
         });

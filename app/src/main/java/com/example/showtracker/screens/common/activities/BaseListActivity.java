@@ -18,8 +18,6 @@ import java.util.*;
  **/
 public abstract class BaseListActivity extends BaseActivity {
     private static final String TAG = "BaseListActivity";
-    public static final int SORT_BY_NAME = 0;
-    public static final int SORT_BY_CUSTOM = 1;
     private List<String> selectionIds = new ArrayList<>();
     private MenuItem deleteButton;
     private MenuItem editButton;

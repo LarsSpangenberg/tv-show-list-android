@@ -29,10 +29,12 @@ import java.util.*;
 
 import static com.example.showtracker.data.lists.entities.ListEntity.*;
 import static com.example.showtracker.data.shows.entities.Show.*;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SHOW_SORT_MODE;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_CUSTOM;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_NAME;
 
 public class ShowsListActivity extends BaseListActivity
     implements ShowRVAdapter.ShowRVEventListener {
-    public static final String SHOW_SORT_MODE = "SHOW_SORT_MODE";
     private static final String TAG = "ShowsListActivity";
 
     private ShowsListViewModel viewModel;
@@ -146,8 +148,8 @@ public class ShowsListActivity extends BaseListActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int sortMode = prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM);
         if (sortMode == SORT_BY_CUSTOM) {
-            Log.d(TAG, "onItemMoved: moving " + toMove.title + " to where " + target.title + " currently is");
-            Log.d(TAG, "onItemMoved: " + getSelection().toString());
+            Log.d(TAG, "onListDragAndDrop: moving " + toMove.title + " to where " + target.title + " currently is");
+            Log.d(TAG, "onListDragAndDrop: " + getSelection().toString());
             this.viewModel.moveShow(toMove, target);
             itemMoveSuccess = true;
         }
@@ -165,7 +167,7 @@ public class ShowsListActivity extends BaseListActivity
                 this.adapter.sortItems(SORT_BY_NAME);
                 break;
             case SORT_BY_CUSTOM:
-                prefsEditor.putInt(SHOW_SORT_MODE, SORT_BY_CUSTOM);
+                prefsEditor.putInt(SHOW_SORT_MODE, SORT_BY_CUSTOM).apply();
                 this.adapter.sortItems(SORT_BY_CUSTOM);
                 break;
         }

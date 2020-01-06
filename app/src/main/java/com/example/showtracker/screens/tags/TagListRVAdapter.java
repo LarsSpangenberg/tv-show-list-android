@@ -10,13 +10,12 @@ import androidx.annotation.*;
 import androidx.recyclerview.widget.*;
 
 import com.example.showtracker.*;
-import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.data.tags.entities.*;
+import com.example.showtracker.screens.common.utils.*;
 
 import java.util.*;
 
-import static com.example.showtracker.screens.common.activities.BaseListActivity.*;
-import static com.example.showtracker.screens.tags.TagListActivity.*;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 
 public class TagListRVAdapter extends RecyclerView.Adapter<TagListRVAdapter.TagViewHolder>
     implements ItemMoveCallback.ItemTouchListener {
@@ -76,7 +75,7 @@ public class TagListRVAdapter extends RecyclerView.Adapter<TagListRVAdapter.TagV
         Tag toMove = this.tagList.get(fromPosition);
         Tag target = this.tagList.get(toPosition);
         boolean itemMoved = this.eventListener.onItemMoved(toMove, target);
-        if (!itemMoved) notifyItemChanged(fromPosition);
+        if (!itemMoved) notifyDataSetChanged();
     }
 
     public void setTagList(List<Tag> allTags) {
