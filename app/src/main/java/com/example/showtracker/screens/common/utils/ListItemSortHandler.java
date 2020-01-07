@@ -6,40 +6,42 @@ import com.example.showtracker.data.lists.entities.*;
 
 import java.util.*;
 
-public class ListItemSortHandler {
+public class ListItemSortHandler<T extends ListItemSortHandler.Sortable> {
     public static final String LIST_SORT_MODE = "LIST_SORT_MODE";
     public static final String SHOW_SORT_MODE = "SHOW_SORT_MODE";
     public static final String TAG_SORT_MODE = "TAG_SORT_MODE";
     public static final int SORT_BY_NAME = 0;
     public static final int SORT_BY_CUSTOM = 1;
+    private SharedPreferences prefs;
+    private List<T> items = new ArrayList<>();
 
     public interface Sortable {
         String getName();
         int getPosition();
     }
 
-    public static <T extends Sortable> void sortItems(SharedPreferences prefs, List<T> items) {
-        if (items.isEmpty()) return;
-        sortItems(
-            prefs,
-            prefs.getInt(getSortModeKey(items.get(0).getClass()), SORT_BY_CUSTOM),
-            items
-        );
+    public ListItemSortHandler(SharedPreferences prefs) {
+        this.prefs = prefs;
     }
 
-    public static <T extends Sortable> void sortItems(
-        SharedPreferences prefs,
-        int sortBy,
-        List<T> items
-    ) {
-        if (items.isEmpty()) return;
+    public void setItems(List<T> items) {
+        this.items = items;
+    }
+
+    public List<T> getSortedItems() {
+        if (items.isEmpty()) return items;
+
+        return getSortedItems(prefs.getInt(getSortModeKey(), SORT_BY_CUSTOM));
+    }
+
+    public List<T> getSortedItems(int sortBy) {
+        if (items.isEmpty()) return items;
 
         SharedPreferences.Editor prefsEditor = prefs.edit();
         Comparator<T> comparator = null;
-        String sortModeKey = getSortModeKey(items.get(0).getClass());
         switch (sortBy) {
             case SORT_BY_NAME:
-                prefsEditor.putInt(sortModeKey, SORT_BY_NAME).apply();
+                prefsEditor.putInt(getSortModeKey(), SORT_BY_NAME).apply();
                 comparator = new Comparator<T>() {
                     @Override
                     public int compare(T o1, T o2) {
@@ -50,7 +52,7 @@ public class ListItemSortHandler {
                 };
                 break;
             case SORT_BY_CUSTOM:
-                prefsEditor.putInt(sortModeKey, SORT_BY_CUSTOM).apply();
+                prefsEditor.putInt(getSortModeKey(), SORT_BY_CUSTOM).apply();
                 comparator = new Comparator<T>() {
                     @Override
                     public int compare(T o1, T o2) {
@@ -65,9 +67,12 @@ public class ListItemSortHandler {
         if (comparator != null) {
             Collections.sort(items, comparator);
         }
+
+        return items;
     }
 
-    private static String getSortModeKey(Class<? extends Sortable> itemClass) {
+    private String getSortModeKey() {
+        Class<? extends Sortable> itemClass = items.get(0).getClass();
         if (itemClass == ListWithShows.class) {
             return LIST_SORT_MODE;
         } else {

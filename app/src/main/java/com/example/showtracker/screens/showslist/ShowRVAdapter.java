@@ -134,8 +134,8 @@ public class ShowRVAdapter extends RecyclerView.Adapter<ShowRVAdapter.ShowViewHo
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.context);
-        Log.d(TAG, "sortItems: pref " + prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM));
-        Log.d(TAG, "sortItems: sort by " + sortBy);
+        Log.d(TAG, "getSortedItems: pref " + prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM));
+        Log.d(TAG, "getSortedItems: sort by " + sortBy);
 
         if (comparator != null) {
             Collections.sort(this.shows, comparator);

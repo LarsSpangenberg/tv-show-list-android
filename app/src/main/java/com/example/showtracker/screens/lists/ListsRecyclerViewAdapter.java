@@ -22,9 +22,11 @@ public class ListsRecyclerViewAdapter
     private static final String TAG = "ListsRecyclerViewAdapte";
 
     private List<ListWithShows> lists;
-    private SharedPreferences prefs;
     private ListItemSelectionHandler selectionHandler;
+    private ListItemSortHandler<ListWithShows> sortHandler;
     private Listener listener;
+
+    private SharedPreferences prefs;
     private LayoutInflater inflater;
 
     public interface Listener {
@@ -38,10 +40,11 @@ public class ListsRecyclerViewAdapter
         ListItemSelectionHandler selectionHandler,
         Listener listener
     ) {
-        this.inflater = inflater;
         this.prefs = prefs;
-        this.selectionHandler = selectionHandler;
+        this.inflater = inflater;
         this.listener = listener;
+        this.selectionHandler = selectionHandler;
+        sortHandler = new ListItemSortHandler<>(prefs);
     }
 
     @NonNull
@@ -71,6 +74,17 @@ public class ListsRecyclerViewAdapter
     }
 
     @Override
+    public void onListClick(ListWithShows list) {
+        listener.onListClick(list);
+    }
+
+    @Override
+    public void onListLongClick(ListWithShows list, int position) {
+        selectionHandler.handleSelection(list.getId());
+        notifyItemChanged(position);
+    }
+
+    @Override
     public void onDrag(int fromPosition, int toPosition) {
         if (prefs.getInt(LIST_SORT_MODE, SORT_BY_CUSTOM) == SORT_BY_CUSTOM) {
             notifyItemMoved(fromPosition, toPosition);
@@ -87,29 +101,14 @@ public class ListsRecyclerViewAdapter
     }
 
     public void bindLists(List<ListWithShows> lists) {
-        this.lists = lists;
-        sortItems();
+        sortHandler.setItems(lists);
+        this.lists = sortHandler.getSortedItems();
         notifyDataSetChanged();
-    }
-
-    public void sortItems() {
-        ListItemSortHandler.sortItems(prefs, lists);
     }
 
     public void sortItems(int sortBy) {
-        ListItemSortHandler.sortItems(prefs, sortBy, lists);
+        lists = sortHandler.getSortedItems(sortBy);
         notifyDataSetChanged();
-    }
-
-    @Override
-    public void onListClick(ListWithShows list) {
-        listener.onListClick(list);
-    }
-
-    @Override
-    public void onListLongClick(ListWithShows list, int position) {
-        selectionHandler.handleSelection(list.getId());
-        notifyItemChanged(position);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
