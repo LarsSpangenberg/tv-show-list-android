@@ -4,7 +4,7 @@ import android.app.*;
 
 import com.example.showtracker.common.dependencyinjection.application.*;
 
-public class MyApplication extends Application {
+public class CustomApplication extends Application {
     private ApplicationComponent applicationComponent;
 
     @Override

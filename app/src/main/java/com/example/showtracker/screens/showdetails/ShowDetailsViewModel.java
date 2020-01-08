@@ -20,7 +20,7 @@ public class ShowDetailsViewModel extends ViewModel {
     private LiveData<ShowDetails> showDetails;
     private MediatorLiveData<ShowDetailsData> showDetailsComplete;
 
-    public ShowDetailsViewModel(MyApplication application, @Nullable String showId) {
+    public ShowDetailsViewModel(CustomApplication application, @Nullable String showId) {
         ApplicationComponent appComponent = application.getApplicationComponent();
 
         showsRepository = appComponent.getShowsRepository();

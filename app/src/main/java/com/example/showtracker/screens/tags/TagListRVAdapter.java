@@ -18,7 +18,7 @@ import java.util.*;
 import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 
 public class TagListRVAdapter extends RecyclerView.Adapter<TagListRVAdapter.TagViewHolder>
-    implements ItemMoveCallback.ItemTouchListener {
+    implements ItemMoveCallback.Listener {
     private static final String TAG = "TagListRVAdapter";
     private List<Tag> tagList;
     private List<String> selection;

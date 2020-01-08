@@ -15,18 +15,18 @@ public class ViewModelModule {
 //    }
 
     @Provides
-    ViewModelFactory viewModelFactory(MyApplication application) {
+    ViewModelFactory viewModelFactory(CustomApplication application) {
         return new ViewModelFactory(application);
     }
 
     @Provides
-    ViewModelWithIdFactory viewModelWithIdFactory(MyApplication application) {
+    ViewModelWithIdFactory viewModelWithIdFactory(CustomApplication application) {
         return new ViewModelWithIdFactory(application);
     }
 
 //    @Provides
-//    MainViewModel mainViewModel(ListsRepository listsRepository) {
-//        return new MainViewModel(listsRepository);
+//    ListsViewModel mainViewModel(ListsRepository listsRepository) {
+//        return new ListsViewModel(listsRepository);
 //    }
 
 //    @Provides

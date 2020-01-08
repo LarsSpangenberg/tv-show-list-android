@@ -12,7 +12,7 @@ public class TagListViewModel extends ViewModel {
     private TagsRepository tagsRepository;
     private LiveData<List<Tag>> tagList;
 
-    public TagListViewModel(MyApplication application) {
+    public TagListViewModel(CustomApplication application) {
         tagsRepository = application.getApplicationComponent().getTagsRepository();
         tagList = tagsRepository.getAll();
     }

@@ -8,16 +8,16 @@ import androidx.recyclerview.widget.*;
 public class ItemMoveCallback extends ItemTouchHelper.Callback {
 
     private static final String TAG = "ItemMoveCallback";
-    private final ItemTouchListener contract;
+    private final Listener listener;
     private int currentPosition = -1;
 
-    public interface ItemTouchListener {
+    public interface Listener {
         void onDrag(int fromPosition, int toPosition);
         void onDrop(int fromPosition, int toPosition);
     }
 
-    public ItemMoveCallback(ItemTouchListener listener) {
-        this.contract = listener;
+    public ItemMoveCallback(Listener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ItemMoveCallback extends ItemTouchHelper.Callback {
         if (this.currentPosition == -1) {
             this.currentPosition = viewHolder.getAdapterPosition();
         }
-        this.contract.onDrag(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        this.listener.onDrag(viewHolder.getAdapterPosition(), target.getAdapterPosition());
         return true;
     }
 
@@ -74,7 +74,7 @@ public class ItemMoveCallback extends ItemTouchHelper.Callback {
     ) {
         Log.d(TAG, "clearView: position " + viewHolder.getAdapterPosition());
         if (currentPosition != -1) {
-            contract.onDrop(currentPosition, viewHolder.getAdapterPosition());
+            listener.onDrop(currentPosition, viewHolder.getAdapterPosition());
             currentPosition = -1;
         }
         super.clearView(recyclerView, viewHolder);

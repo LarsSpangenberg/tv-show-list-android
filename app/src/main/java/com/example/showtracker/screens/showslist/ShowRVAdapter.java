@@ -22,7 +22,7 @@ import java.util.*;
 import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 
 public class ShowRVAdapter extends RecyclerView.Adapter<ShowRVAdapter.ShowViewHolder> implements
-    ItemMoveCallback.ItemTouchListener {
+    ItemMoveCallback.Listener {
 
     private static final String TAG = "ShowRVAdapter";
     private List<ShowWithTags> shows;

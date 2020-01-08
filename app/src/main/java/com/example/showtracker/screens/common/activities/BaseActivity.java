@@ -18,6 +18,6 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private ApplicationComponent getApplicationComponent() {
-        return ((MyApplication) getApplication()).getApplicationComponent();
+        return ((CustomApplication) getApplication()).getApplicationComponent();
     }
 }

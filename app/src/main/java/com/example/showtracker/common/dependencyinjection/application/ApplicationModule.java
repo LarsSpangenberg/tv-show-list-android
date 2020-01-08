@@ -1,6 +1,8 @@
 package com.example.showtracker.common.dependencyinjection.application;
 
 import android.app.*;
+import android.content.*;
+import android.preference.*;
 
 import androidx.annotation.*;
 import androidx.room.*;
@@ -79,7 +81,12 @@ public class ApplicationModule {
     }
 
     @Provides
-    MyApplication getApplication() {
-        return (MyApplication) application;
+    CustomApplication getApplication() {
+        return (CustomApplication) application;
+    }
+
+    @Provides
+    SharedPreferences getSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(application);
     }
 }

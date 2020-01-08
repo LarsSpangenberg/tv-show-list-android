@@ -9,11 +9,11 @@ import com.example.showtracker.screens.showslist.*;
 
 public class ViewModelWithIdFactory implements ViewModelProvider.Factory {
 
-    private final MyApplication application;
+    private final CustomApplication application;
     private String id;
 
 
-    public ViewModelWithIdFactory(MyApplication application) {
+    public ViewModelWithIdFactory(CustomApplication application) {
         this.application = application;
     }
 

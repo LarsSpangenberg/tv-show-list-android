@@ -8,11 +8,11 @@ import com.example.showtracker.data.lists.entities.*;
 
 import java.util.*;
 
-public class MainViewModel extends ViewModel {
+public class ListsViewModel extends ViewModel {
     private ListsRepository listsRepository;
     private LiveData<List<ListWithShows>> listsWithShows;
 
-    public MainViewModel(MyApplication application) {
+    public ListsViewModel(CustomApplication application) {
         listsRepository = application.getApplicationComponent().getListsRepository();
         listsWithShows = listsRepository.getAllListsWithShowId();
     }

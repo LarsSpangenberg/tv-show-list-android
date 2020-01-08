@@ -4,6 +4,8 @@ import android.app.*;
 import android.content.*;
 import android.view.*;
 
+import com.example.showtracker.screens.common.views.*;
+
 import dagger.*;
 
 @Module
@@ -23,5 +25,13 @@ public class PresentationModule {
     @Provides
     LayoutInflater getLayoutInflater() {
         return LayoutInflater.from(activity);
+    }
+
+    @Provides
+    ViewMvcFactory getViewMvcFactory(
+        LayoutInflater layoutInflater,
+        SharedPreferences prefs
+    ) {
+        return new ViewMvcFactory(layoutInflater, prefs);
     }
 }

@@ -11,9 +11,9 @@ import com.example.showtracker.screens.tags.*;
 public class ViewModelFactory implements ViewModelProvider.Factory {
 
 
-    private MyApplication application;
+    private CustomApplication application;
 
-    public ViewModelFactory(MyApplication application) {
+    public ViewModelFactory(CustomApplication application) {
 
         this.application = application;
     }
@@ -23,8 +23,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @SuppressWarnings("unchecked")
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         ViewModel viewModel;
-        if (modelClass == MainViewModel.class) {
-            viewModel = new MainViewModel(application);
+        if (modelClass == ListsViewModel.class) {
+            viewModel = new ListsViewModel(application);
         } else if (modelClass == ShowDetailsViewModel.class) {
             viewModel = new TagListViewModel(application);
         } else {

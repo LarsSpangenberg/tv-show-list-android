@@ -16,4 +16,5 @@ public interface ApplicationComponent {
     ListsRepository getListsRepository();
     ShowsRepository getShowsRepository();
     TagsRepository getTagsRepository();
+
 }

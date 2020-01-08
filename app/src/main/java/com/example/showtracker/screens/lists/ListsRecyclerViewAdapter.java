@@ -1,7 +1,6 @@
 package com.example.showtracker.screens.lists;
 
 import android.content.*;
-import android.util.*;
 import android.view.*;
 
 import androidx.annotation.*;
@@ -9,40 +8,40 @@ import androidx.recyclerview.widget.*;
 
 import com.example.showtracker.data.lists.entities.*;
 import com.example.showtracker.screens.common.utils.*;
+import com.example.showtracker.screens.common.views.*;
 import com.example.showtracker.screens.lists.listslistitem.*;
 
 import java.util.*;
 
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.LIST_SORT_MODE;
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_CUSTOM;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 
 public class ListsRecyclerViewAdapter
     extends RecyclerView.Adapter<ListsRecyclerViewAdapter.ViewHolder>
-    implements ItemMoveCallback.ItemTouchListener, ListsListItemViewMvc.Listener {
+    implements ItemMoveCallback.Listener, ListsListItemViewMvc.Listener {
     private static final String TAG = "ListsRecyclerViewAdapte";
 
     private List<ListWithShows> lists;
     private ListItemSelectionHandler selectionHandler;
     private ListItemSortHandler<ListWithShows> sortHandler;
+    private ViewMvcFactory viewMvcFactory;
     private Listener listener;
 
     private SharedPreferences prefs;
-    private LayoutInflater inflater;
 
     public interface Listener {
         void onListClick(ListWithShows list);
-        boolean onListDragAndDrop(ListEntity toMove, ListEntity target);
+        void onListDragAndDrop(ListEntity toMove, ListEntity target);
     }
 
     public ListsRecyclerViewAdapter(
-        LayoutInflater inflater,
         SharedPreferences prefs,
         ListItemSelectionHandler selectionHandler,
-        Listener listener
+        Listener listener,
+        ViewMvcFactory viewMvcFactory
     ) {
         this.prefs = prefs;
-        this.inflater = inflater;
         this.listener = listener;
+        this.viewMvcFactory = viewMvcFactory;
         this.selectionHandler = selectionHandler;
         sortHandler = new ListItemSortHandler<>(prefs);
     }
@@ -50,7 +49,10 @@ public class ListsRecyclerViewAdapter
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ListsListItemViewMvc viewMvc = new ListsListItemViewMvcImpl(inflater, parent);
+        ListsListItemViewMvc viewMvc = viewMvcFactory.getListsListItemViewMvc(
+            selectionHandler,
+            parent
+        );
         viewMvc.registerListener(this);
         return new ViewHolder(viewMvc);
     }
@@ -59,11 +61,7 @@ public class ListsRecyclerViewAdapter
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if (lists != null) {
             ListWithShows current = lists.get(position);
-            holder.viewMvc.bindList(
-                current,
-                position,
-                selectionHandler.isSelected(current.getId())
-            );
+            holder.viewMvc.bindList(current, position);
         }
     }
 
@@ -93,11 +91,14 @@ public class ListsRecyclerViewAdapter
 
     @Override
     public void onDrop(int fromPosition, int toPosition) {
-        ListEntity toMove = lists.get(fromPosition).list;
-        ListEntity target = lists.get(toPosition).list;
-        boolean itemMoved = listener.onListDragAndDrop(toMove, target);
-        Log.d(TAG, "onDrop: " + itemMoved);
-        if (!itemMoved) notifyDataSetChanged();
+        ListEntity toMove = lists.get(fromPosition).getList();
+        ListEntity target = lists.get(toPosition).getList();
+        listener.onListDragAndDrop(toMove, target);
+        selectionHandler.unselectItem(toMove.getId());
+
+        if (prefs.getInt(LIST_SORT_MODE, SORT_BY_CUSTOM) != SORT_BY_CUSTOM) {
+            notifyItemChanged(fromPosition);
+        }
     }
 
     public void bindLists(List<ListWithShows> lists) {

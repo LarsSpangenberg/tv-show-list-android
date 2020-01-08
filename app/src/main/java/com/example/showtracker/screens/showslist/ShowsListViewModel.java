@@ -23,7 +23,7 @@ public class ShowsListViewModel extends ViewModel {
     private String listId;
 
 
-    public ShowsListViewModel(MyApplication application, String listId) {
+    public ShowsListViewModel(CustomApplication application, String listId) {
         Log.d(TAG, "ShowsListViewModel: passed id " + listId + " to VM");
         this.listId = listId;
 
