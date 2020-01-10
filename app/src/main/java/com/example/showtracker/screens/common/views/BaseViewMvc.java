@@ -3,6 +3,8 @@ package com.example.showtracker.screens.common.views;
 import android.content.*;
 import android.view.*;
 
+import androidx.annotation.*;
+
 public abstract class BaseViewMvc implements ViewMvc {
     private View rootView;
 
@@ -21,5 +23,9 @@ public abstract class BaseViewMvc implements ViewMvc {
 
     protected Context getContext() {
         return getRootView().getContext();
+    }
+
+    protected String getString(@StringRes int id) {
+        return getContext().getString(id);
     }
 }

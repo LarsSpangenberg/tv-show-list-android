@@ -18,7 +18,7 @@ public class ListItemSelectionHandler {
     private MenuItem deleteButton;
     private MenuItem editButton;
 
-    public List<String> getSelection() {
+    public List<String> getSelectionIds() {
         return selectionIds;
     }
 
@@ -43,7 +43,7 @@ public class ListItemSelectionHandler {
         if (editButton != null) editButton.setVisible(false);
     }
 
-    public void setDeleteButton(MenuItem deleteButton) {
+    public void enableDeleteButton(MenuItem deleteButton) {
         this.deleteButton = deleteButton;
         if (this.deleteButton != null) handleDeleteIcon();
     }
@@ -84,6 +84,6 @@ public class ListItemSelectionHandler {
     }
 
     public boolean isSelected(String id) {
-        return getSelection().contains(id);
+        return getSelectionIds().contains(id);
     }
 }

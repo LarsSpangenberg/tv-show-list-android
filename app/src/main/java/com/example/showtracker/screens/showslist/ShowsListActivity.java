@@ -44,6 +44,13 @@ public class ShowsListActivity extends BaseListActivity
     private ShowRVAdapter adapter;
     private ShowsListFilters filters;
 
+    public static void start(ListEntity list, Context context) {
+        Intent intent = new Intent(context, ShowsListActivity.class);
+        intent.putExtra(LIST_ID, list.getId());
+        intent.putExtra(ListEntity.class.getSimpleName(), list);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

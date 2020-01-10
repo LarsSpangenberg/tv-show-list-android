@@ -5,7 +5,6 @@ import androidx.lifecycle.*;
 
 import com.example.showtracker.common.*;
 import com.example.showtracker.screens.lists.*;
-import com.example.showtracker.screens.showdetails.*;
 import com.example.showtracker.screens.tags.*;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
@@ -25,7 +24,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         ViewModel viewModel;
         if (modelClass == ListsViewModel.class) {
             viewModel = new ListsViewModel(application);
-        } else if (modelClass == ShowDetailsViewModel.class) {
+        } else if (modelClass == TagListViewModel.class) {
             viewModel = new TagListViewModel(application);
         } else {
             throw new RuntimeException("invalid view model class: " + modelClass);

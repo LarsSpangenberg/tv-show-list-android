@@ -2,8 +2,10 @@ package com.example.showtracker.common.dependencyinjection.presentation;
 
 import android.content.*;
 
+import com.example.showtracker.screens.common.screensnavigator.*;
 import com.example.showtracker.screens.common.viewmodel.*;
 import com.example.showtracker.screens.common.views.*;
+import com.example.showtracker.screens.lists.*;
 
 import dagger.*;
 
@@ -13,4 +15,7 @@ public interface PresentationComponent {
     ViewModelWithIdFactory getViewModelWithIdFactory();
     ViewMvcFactory getViewMvcFactory();
     SharedPreferences getSharedPreferences();
+    ScreensNavigator getScreensNavigator();
+
+    void inject(ListsActivity listsActivity);
 }

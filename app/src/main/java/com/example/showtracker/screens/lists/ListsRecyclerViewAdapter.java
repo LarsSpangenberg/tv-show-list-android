@@ -18,7 +18,6 @@ import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*
 public class ListsRecyclerViewAdapter
     extends RecyclerView.Adapter<ListsRecyclerViewAdapter.ViewHolder>
     implements ItemMoveCallback.Listener, ListsListItemViewMvc.Listener {
-    private static final String TAG = "ListsRecyclerViewAdapte";
 
     private List<ListWithShows> lists;
     private ListItemSelectionHandler selectionHandler;
@@ -49,20 +48,14 @@ public class ListsRecyclerViewAdapter
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ListsListItemViewMvc viewMvc = viewMvcFactory.getListsListItemViewMvc(
-            selectionHandler,
-            parent
-        );
-        viewMvc.registerListener(this);
-        return new ViewHolder(viewMvc);
+        ListsListItemViewMvc viewHolderViewMvc = viewMvcFactory.getListsListItemViewMvc(parent);
+        viewHolderViewMvc.registerListener(this);
+        return new ViewHolder(viewHolderViewMvc);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (lists != null) {
-            ListWithShows current = lists.get(position);
-            holder.viewMvc.bindList(current, position);
-        }
+        holder.viewMvc.bindList(lists.get(position), position);
     }
 
     @Override

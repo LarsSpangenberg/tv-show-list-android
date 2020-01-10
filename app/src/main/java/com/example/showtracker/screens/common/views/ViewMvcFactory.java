@@ -4,21 +4,33 @@ import android.content.*;
 import android.view.*;
 
 import androidx.annotation.*;
+import androidx.appcompat.widget.*;
 
+import com.example.showtracker.screens.common.toolbar.*;
 import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.screens.lists.*;
 import com.example.showtracker.screens.lists.listslistitem.*;
 
 public class ViewMvcFactory {
     private final LayoutInflater layoutInflater;
-    private SharedPreferences prefs;
+    private final SharedPreferences prefs;
+    private final ListItemSelectionHandler selectionHandler;
 
-    public ViewMvcFactory(LayoutInflater layoutInflater, SharedPreferences prefs) {
+    public ViewMvcFactory(
+        LayoutInflater layoutInflater,
+        SharedPreferences prefs,
+        ListItemSelectionHandler selectionHandler
+    ) {
         this.layoutInflater = layoutInflater;
         this.prefs = prefs;
+        this.selectionHandler = selectionHandler;
     }
 
-    public ListsViewMvc getListsViewMvc(ListItemSelectionHandler selectionHandler, @Nullable ViewGroup parent) {
+    public ToolbarViewMvc getToolbarViewMvc(Toolbar toolbar) {
+        return new ToolbarViewMvc(selectionHandler, toolbar);
+    }
+
+    public ListsViewMvc getListsViewMvc(@Nullable ViewGroup parent) {
         return new ListsViewMvcImpl(
             layoutInflater,
             prefs,
@@ -28,10 +40,7 @@ public class ViewMvcFactory {
         );
     }
 
-    public ListsListItemViewMvc getListsListItemViewMvc(
-        ListItemSelectionHandler selectionHandler,
-        @Nullable ViewGroup parent
-    ) {
+    public ListsListItemViewMvc getListsListItemViewMvc(@Nullable ViewGroup parent) {
         return new ListsListItemViewMvcImpl(layoutInflater, selectionHandler, parent);
     }
 }

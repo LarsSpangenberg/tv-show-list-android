@@ -1,14 +1,16 @@
 package com.example.showtracker.screens.common.activities;
 
+import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.text.*;
 import android.view.*;
 import android.widget.*;
 
-import androidx.appcompat.app.*;
+import androidx.appcompat.app.ActionBar;
 
 import com.example.showtracker.*;
+import com.example.showtracker.data.lists.entities.*;
 import com.google.android.material.textfield.*;
 
 import java.io.*;
@@ -16,6 +18,8 @@ import java.io.*;
 import static android.content.Intent.*;
 
 public class SimpleAddEditActivity extends BaseActivity {
+    public static final int ACTIVITY_REQUEST_CODE_EDIT_LIST = 1;
+
     public static final String EXTRA_REPLY =
         "com.example.showtracker.view.SimpleAddEditActivity.REPLY";
     public static final String ITEM_TO_EDIT = "ITEM_TO_EDIT";
@@ -24,6 +28,22 @@ public class SimpleAddEditActivity extends BaseActivity {
     public static final int TAG_ITEM = 0;
     public static final int LIST_ITEM = 1;
     public static final int RESULT_EMPTY = 2;
+
+    public static void startRenameList(Activity activity, ListEntity list) {
+            Intent intent = new Intent(activity, SimpleAddEditActivity.class);
+            intent.putExtra(ITEM_TO_EDIT, list);
+            intent.putExtra(ITEM_NAME, list.name);
+            intent.putExtra(ITEM_TYPE, LIST_ITEM);
+            intent.setAction(Intent.ACTION_EDIT);
+
+            activity.startActivityForResult(intent, ACTIVITY_REQUEST_CODE_EDIT_LIST);
+    }
+
+    public static void startNewList(Activity activity) {
+        Intent intent = new Intent(activity, SimpleAddEditActivity.class);
+        intent.putExtra(ITEM_TYPE, LIST_ITEM);
+        activity.startActivityForResult(intent, ACTIVITY_REQUEST_CODE_EDIT_LIST);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

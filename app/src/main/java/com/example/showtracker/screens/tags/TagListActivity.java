@@ -13,9 +13,9 @@ import androidx.lifecycle.*;
 import androidx.recyclerview.widget.*;
 
 import com.example.showtracker.R;
-import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.data.tags.entities.*;
 import com.example.showtracker.screens.common.activities.*;
+import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.screens.common.viewmodel.*;
 import com.google.android.material.floatingactionbutton.*;
 import com.google.android.material.snackbar.*;
@@ -23,9 +23,7 @@ import com.google.android.material.snackbar.*;
 import java.util.*;
 
 import static com.example.showtracker.screens.common.activities.SimpleAddEditActivity.*;
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_CUSTOM;
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_NAME;
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.TAG_SORT_MODE;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 //import static com.example.showtracker.views.AddEditTagActivity.*;
 
 public class TagListActivity extends BaseListActivity
@@ -35,6 +33,11 @@ public class TagListActivity extends BaseListActivity
 
     private TagListViewModel viewModel;
     private TagListRVAdapter adapter;
+
+    public static void start(Context context) {
+        Intent intent = new Intent(context, TagListActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
