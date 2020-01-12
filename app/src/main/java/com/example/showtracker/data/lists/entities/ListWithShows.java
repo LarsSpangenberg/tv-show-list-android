@@ -24,7 +24,7 @@ public class ListWithShows implements ListItemSortHandler.Sortable {
     }
 
     public String getId() {
-        return list.id;
+        return getList().id;
     }
 
     public ListEntity getList() {

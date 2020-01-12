@@ -1,52 +1,51 @@
 package com.example.showtracker.screens.showslist;
 
-import android.app.*;
 import android.content.*;
 import android.os.*;
-import android.preference.*;
-import android.util.*;
-import android.view.*;
-import android.widget.*;
 
 import androidx.annotation.*;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.*;
-import androidx.recyclerview.widget.*;
 
 import com.example.showtracker.R;
-import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.data.lists.entities.*;
 import com.example.showtracker.data.shows.entities.*;
 import com.example.showtracker.data.tags.entities.*;
 import com.example.showtracker.screens.common.activities.*;
-import com.example.showtracker.screens.showdetails.*;
+import com.example.showtracker.screens.common.dialogs.*;
+import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.screens.common.viewmodel.*;
+import com.example.showtracker.screens.common.views.*;
+import com.example.showtracker.screens.showdetails.*;
 import com.example.showtracker.screens.showslist.ShowsListViewModel.*;
-import com.google.android.material.floatingactionbutton.*;
 
 import java.util.*;
 
+import javax.inject.*;
+
 import static com.example.showtracker.data.lists.entities.ListEntity.*;
 import static com.example.showtracker.data.shows.entities.Show.*;
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SHOW_SORT_MODE;
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_CUSTOM;
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_NAME;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 
-public class ShowsListActivity extends BaseListActivity
-    implements ShowRVAdapter.ShowRVEventListener {
+public class ShowsListActivity extends BaseActivity
+    implements ShowsListViewMvc.Listener{
     private static final String TAG = "ShowsListActivity";
 
-    private ShowsListViewModel viewModel;
     private ListEntity currentList;
     private List<Tag> allTags = new ArrayList<>();
 
-    private ShowRVAdapter adapter;
-    private ShowsListFilters filters;
+    @Inject SharedPreferences prefs;
+    @Inject ShowsListFilters filters;
+    @Inject ListItemSelectionHandler selectionHandler;
+    @Inject ViewModelWithIdFactory viewModelFactory;
+    @Inject ViewMvcFactory viewMvcFactory;
+
+    private ShowsListViewMvc viewMvc;
+    private ShowsListViewModel viewModel;
 
     public static void start(ListEntity list, Context context) {
         Intent intent = new Intent(context, ShowsListActivity.class);
-        intent.putExtra(LIST_ID, list.getId());
+//        intent.putExtra(LIST_ID, list.getId());
         intent.putExtra(ListEntity.class.getSimpleName(), list);
         context.startActivity(intent);
     }
@@ -54,139 +53,112 @@ public class ShowsListActivity extends BaseListActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shows_list);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-
-        RecyclerView recyclerView = findViewById(R.id.shows_list);
-        adapter = new ShowRVAdapter(this, this);
-        filters = new ShowsListFilters();
-
-        ItemTouchHelper.Callback callback = new ItemMoveCallback(this.adapter);
-        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(recyclerView);
-
-        recyclerView.setAdapter(this.adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        getPresentationComponent().inject(this);
 
         Intent intent = getIntent();
         currentList = (ListEntity) intent.getSerializableExtra(ListEntity.class.getSimpleName());
 
-        ViewModelWithIdFactory factory = getPresentationComponent().getViewModelWithIdFactory();
-        factory.setId(currentList.id);
-        viewModel = ViewModelProviders.of(this, factory).get(ShowsListViewModel.class);
+        viewModelFactory.setId(currentList.getId());
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowsListViewModel.class);
 
-        toolbar.setTitle(this.currentList.toString());
-        setSupportActionBar(toolbar);
+        viewMvc = viewMvcFactory.getShowsListViewMvc(currentList, filters, null);
 
-        subscribeUIShows();
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ShowsListActivity.this, ShowDetailActivity.class);
-                intent.putExtra(LIST_ID, currentList.id);
-                startActivity(intent);
-            }
-        });
+        setContentView(R.layout.activity_shows_list);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.shows_list_menu, menu);
-        setDeleteButton(menu.findItem(R.id.shows_list_delete));
-        return true;
+    protected void onStart() {
+        super.onStart();
+        viewMvc.registerListener(this);
+        registerViewModelObservers();
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int sortMode = prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM);
-        menu.findItem(R.id.sl_menu_sort_by_name).setChecked(sortMode == SORT_BY_NAME);
-        menu.findItem(R.id.sl_menu_sort_by_custom).setChecked(sortMode == SORT_BY_CUSTOM);
-
-        return super.onPrepareOptionsMenu(menu);
+    protected void onStop() {
+        super.onStop();
+        viewMvc.unregisterListener(this);
+        unregisterViewModelObservers();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.shows_list_delete:
-                deleteSelectedShows();
-                return true;
-            case R.id.sl_menu_sort_by_name:
-                sortItems(SORT_BY_NAME);
-                return true;
-            case R.id.sl_menu_sort_by_custom:
-                sortItems(SORT_BY_CUSTOM);
-                return true;
-            case R.id.sl_menu_filter_status:
-                showStatusFilterDialog();
-                return true;
-            case R.id.sl_menu_filter_tag:
-                showTagFilterDialog();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void onNavigationUpClick() {
+        onBackPressed();
     }
+
+    //    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.shows_list_menu, menu);
+//        setDeleteButton(menu.findItem(R.id.shows_list_delete));
+//        return true;
+//    }
+
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        int sortMode = prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM);
+//        menu.findItem(R.id.sl_menu_sort_by_name).setChecked(sortMode == SORT_BY_NAME);
+//        menu.findItem(R.id.sl_menu_sort_by_custom).setChecked(sortMode == SORT_BY_CUSTOM);
+//
+//        return super.onPrepareOptionsMenu(menu);
+//    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        switch (id) {
+//            case R.id.shows_list_delete:
+//                deleteSelectedShows();
+//                return true;
+//            case R.id.sl_menu_sort_by_name:
+//                sortItems(SORT_BY_NAME);
+//                return true;
+//            case R.id.sl_menu_sort_by_custom:
+//                sortItems(SORT_BY_CUSTOM);
+//                return true;
+//            case R.id.sl_menu_filter_status:
+//                showStatusFilterDialog();
+//                return true;
+//            case R.id.sl_menu_filter_tag:
+//                showTagFilterDialog();
+//                return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public void onShowClick(@NonNull Show show) {
+        ShowDetailActivity.start(this, show.getId());
+    }
+
+
+    @Override
+    public void onShowDragAndDrop(@NonNull Show toMove, @NonNull Show target) {
+        int sortMode = prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM);
+        if (sortMode == SORT_BY_CUSTOM) {
+            viewModel.moveShow(toMove, target);
+        }
+    }
+
+    @Override
+    public void onFabClick() {
         Intent intent = new Intent(this, ShowDetailActivity.class);
-        Log.d(TAG, "onShowClick: show " + show.title + show.id + " clicked");
-        intent.putExtra(SHOW_ID, show.id);
-        intent.setAction(Intent.ACTION_EDIT);
+        intent.putExtra(LIST_ID, currentList.getId());
         startActivity(intent);
     }
 
     @Override
-    public void onLongClick(@NonNull Show show, int position) {
-        handleSelection(show.id);
-        this.adapter.setSelection(getSelection());
-        this.adapter.notifyItemChanged(position);
+    public void onDeleteShowClick() {
+        viewModel.deleteShowsFromList(currentList.getId(), selectionHandler.getSelectionIds());
+        selectionHandler.resetSelection();
     }
-
 
     @Override
-    public boolean onItemMoved(@NonNull Show toMove, @NonNull Show target) {
-        boolean itemMoveSuccess = false;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int sortMode = prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM);
-        if (sortMode == SORT_BY_CUSTOM) {
-            Log.d(TAG, "onListDragAndDrop: moving " + toMove.title + " to where " + target.title + " currently is");
-            Log.d(TAG, "onListDragAndDrop: " + getSelection().toString());
-            this.viewModel.moveShow(toMove, target);
-            itemMoveSuccess = true;
-        }
-        unselectItem(toMove.id);
-        return itemMoveSuccess;
-    }
-
-    private void sortItems(int sortBy) {
-        SharedPreferences.Editor prefsEditor = PreferenceManager
-            .getDefaultSharedPreferences(this)
-            .edit();
-        switch (sortBy) {
-            case SORT_BY_NAME:
-                prefsEditor.putInt(SHOW_SORT_MODE, SORT_BY_NAME).apply();
-                this.adapter.sortItems(SORT_BY_NAME);
-                break;
-            case SORT_BY_CUSTOM:
-                prefsEditor.putInt(SHOW_SORT_MODE, SORT_BY_CUSTOM).apply();
-                this.adapter.sortItems(SORT_BY_CUSTOM);
-                break;
-        }
-    }
-
-    private void showStatusFilterDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public void onStatusFilterMenuClick() {
         final Status[] items = Status.values();
         int itemCount = items.length;
         String[] statusFilterNames = new String[itemCount];
         final boolean[] checkedItems = new boolean[itemCount];
-        List<Status> statusFilter = this.filters.getStatusFilters();
+        List<Status> statusFilter = filters.getStatusFilters();
 
         for (int i = 0; i < itemCount; i++) {
             Status status = items[i];
@@ -194,78 +166,82 @@ public class ShowsListActivity extends BaseListActivity
             checkedItems[i] = statusFilter.contains(status);
         }
 
-        builder.setTitle("Filter by Status");
-        builder.setMultiChoiceItems(
+        showFilterDialog(
+            "Filter by Status",
             statusFilterNames,
             checkedItems,
-            new DialogInterface.OnMultiChoiceClickListener() {
+            new FiltersDialog.Listener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                public void onItemClick(int which) {
                     filters.handleStatusFilter(items[which]);
+
+                }
+
+                @Override
+                public void onPositiveButtonClicked() {
+                    viewModel.setShowsListData(filters);
+                    registerViewModelObservers();
                 }
             }
         );
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                viewModel.setShowsListData(filters);
-                subscribeUIShows();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
-    private void showTagFilterDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        int itemCount = this.allTags.size();
+    @Override
+    public void onTagFilterMenuClick() {
+        int itemCount = allTags.size();
         String[] tagFilterNames = new String[itemCount];
         final boolean[] checkedItems = new boolean[itemCount];
-        List<String> tagFilter = this.filters.getFilteredTagIds();
+        List<String> tagFilter = filters.getFilteredTagIds();
 
         for (int i = 0; i < itemCount; i++) {
-            Tag tag = this.allTags.get(i);
+            Tag tag = allTags.get(i);
             tagFilterNames[i] = tag.toString();
             checkedItems[i] = tagFilter.contains(tag.id);
         }
 
-        builder.setTitle("Filter by Tags");
-        builder.setMultiChoiceItems(
+        showFilterDialog(
+            "Filter by Tags",
             tagFilterNames,
             checkedItems,
-            new DialogInterface.OnMultiChoiceClickListener() {
+            new FiltersDialog.Listener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                public void onItemClick(int which) {
                     filters.handleTagFilter(allTags.get(which).id);
+
+                }
+
+                @Override
+                public void onPositiveButtonClicked() {
+                    viewModel.setShowsListData(filters);
+                    registerViewModelObservers();
                 }
             }
         );
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                viewModel.setShowsListData(filters);
-                subscribeUIShows();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
-    private void setFilterDisplays() {
-        TextView statusFilterDisplay = findViewById(R.id.sl_status_filter_display);
-        TextView tagFilterDisplay = findViewById(R.id.sl_tag_filter_display);
+    private void showFilterDialog(
+        String title,
+        String[] filterNames,
+        boolean[] checkedItems,
+        FiltersDialog.Listener listener
+    ) {
+        FiltersDialog dialog = FiltersDialog.newInstance(
+            title,
+            filterNames,
+            checkedItems
+        );
+        dialog.setListener(listener);
+        dialog.show(getSupportFragmentManager(), FiltersDialog.TAG);
+    }
 
-        List<String> tagIds = this.filters.getFilteredTagIds();
-        List<Status> statusFilters = this.filters.getStatusFilters();
-        StringBuilder builder;
+    private String getTagFilterReferenceText() {
+        List<String> tagIds = filters.getFilteredTagIds();
+        StringBuilder builder = new StringBuilder();
 
-        if (tagIds.isEmpty()) {
-            tagFilterDisplay.setVisibility(View.GONE);
-        } else {
-            builder = new StringBuilder();
+        if (!tagIds.isEmpty()) {
             boolean firstItem = true;
             builder.append("Tag Filters: ");
-            for (Tag tag : this.allTags) {
+            for (Tag tag : allTags) {
                 if (tagIds.contains(tag.id)) {
                     if (firstItem) {
                         firstItem = false;
@@ -275,14 +251,16 @@ public class ShowsListActivity extends BaseListActivity
                     builder.append(tag.name);
                 }
             }
-            tagFilterDisplay.setVisibility(View.VISIBLE);
-            tagFilterDisplay.setText(builder.toString());
         }
+        return builder.toString();
 
-        if (statusFilters.isEmpty()) {
-            statusFilterDisplay.setVisibility(View.GONE);
-        } else {
-            builder = new StringBuilder();
+    }
+
+    private String getStatusFilterReferenceText() {
+        List<Show.Status> statusFilters = filters.getStatusFilters();
+        StringBuilder builder = new StringBuilder();
+
+        if (!statusFilters.isEmpty()) {
             builder.append("Status Filters: ");
             for (int i = 0; i < statusFilters.size(); i++) {
                 if (i != 0) {
@@ -290,43 +268,31 @@ public class ShowsListActivity extends BaseListActivity
                 }
                 builder.append(statusFilters.get(i).toString());
             }
-            statusFilterDisplay.setVisibility(View.VISIBLE);
-            statusFilterDisplay.setText(builder.toString());
         }
-
+        return builder.toString();
     }
 
-    private void deleteSelectedShows() {
-        Log.d(TAG, "deleteSelectedShows: deleting " + getSelection().size() + " items");
-        this.viewModel.deleteShowsFromList(this.currentList.id, getSelection());
-        resetSelection();
-    }
-
-    private void prepareUiData(List<ShowWithTags> shows, List<Tag> allTags) {
-        TextView noResultsMessage = findViewById(R.id.sl_empty_list_message);
-        if (shows.isEmpty()) {
-            noResultsMessage.setVisibility(View.VISIBLE);
-        } else {
-            noResultsMessage.setVisibility(View.GONE);
-        }
-        this.adapter.setShows(shows);
-        this.adapter.setAllTags(allTags);
-        this.allTags = allTags;
-        setFilterDisplays();
-        invalidateOptionsMenu();
-    }
-
-    private void subscribeUIShows() {
+    private void registerViewModelObservers() {
         viewModel.getShowsListData().observe(
             this,
             new Observer<ShowsListData>() {
                 @Override
                 public void onChanged(ShowsListData data) {
                     if (data != null) {
-                        prepareUiData(data.shows, data.allTags);
+//                        prepareUiData(data.shows, data.allTags);
+                        viewMvc.bindShowsAndTags(
+                            data.shows,
+                            data.allTags,
+                            getStatusFilterReferenceText(),
+                            getTagFilterReferenceText()
+                        );
                     }
                 }
             }
         );
+    }
+
+    private void unregisterViewModelObservers() {
+        viewModel.getShowsListData().removeObservers(this);
     }
 }

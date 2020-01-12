@@ -51,6 +51,12 @@ public class ShowDetailActivity extends BaseActivity {
     private EditText comment;
     private CollapsingToolbarLayout collapsingToolbarLayout;
 
+    public static void start(Context context, String showId) {
+        Intent intent = new Intent(context, ShowDetailActivity.class);
+        intent.putExtra(SHOW_ID, showId);
+        intent.setAction(Intent.ACTION_EDIT);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +70,6 @@ public class ShowDetailActivity extends BaseActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
         }
-
-        // TODO add a more convenient way to turn off keyboard
-        // TODO refine enter behavior of the text inputs
 
         this.titleLayout = findViewById(R.id.sd_title_input_layout);
         this.title = findViewById(R.id.sd_title_input);

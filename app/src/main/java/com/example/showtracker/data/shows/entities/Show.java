@@ -13,6 +13,8 @@ import java.util.*;
     indices = @Index("id")
 )
 public class Show implements ListItem {
+
+    // TODO remove this
     @Ignore
     public static final String SHOW_ID = "SHOW_ID";
 
@@ -92,5 +94,25 @@ public class Show implements ListItem {
     @Override
     public String toString() {
         return this.title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getSeason() {
+        return season;
+    }
+
+    public int getEpisode() {
+        return episode;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public String getComment() {
+        return comment;
     }
 }

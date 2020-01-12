@@ -50,4 +50,9 @@ public class PresentationModule {
         }
         return selectionHandler;
     }
+
+    @Provides
+    ShowsListFilters getShowFilterHandler() {
+        return new ShowsListFilters();
+    }
 }

@@ -4,12 +4,13 @@ import androidx.annotation.*;
 import androidx.room.*;
 
 import com.example.showtracker.data.common.interfaces.*;
+import com.example.showtracker.screens.common.utils.*;
 
 import java.io.*;
 import java.util.*;
 
 @Entity(tableName = "tags")
-public class Tag implements Serializable, ListItem {
+public class Tag implements Serializable, ListItem, ListItemSortHandler.Sortable {
     @PrimaryKey
     @NonNull
     public String id;
@@ -17,14 +18,19 @@ public class Tag implements Serializable, ListItem {
     public int position;
 
     public Tag(String name) {
-        this.id = UUID.randomUUID().toString();
+        id = UUID.randomUUID().toString();
         this.name = name;
     }
 
     @NonNull
     @Override
     public String getId() {
-        return this.id;
+        return id;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -40,6 +46,6 @@ public class Tag implements Serializable, ListItem {
     @NonNull
     @Override
     public String toString() {
-        return this.name;
+        return name;
     }
 }

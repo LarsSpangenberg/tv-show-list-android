@@ -3,6 +3,8 @@ package com.example.showtracker.screens.common.utils;
 import android.content.*;
 
 import com.example.showtracker.data.lists.entities.*;
+import com.example.showtracker.data.shows.entities.*;
+import com.example.showtracker.data.tags.entities.*;
 
 import java.util.*;
 
@@ -75,6 +77,10 @@ public class ListItemSortHandler<T extends ListItemSortHandler.Sortable> {
         Class<? extends Sortable> itemClass = items.get(0).getClass();
         if (itemClass == ListWithShows.class) {
             return LIST_SORT_MODE;
+        } else if (itemClass == ShowWithTags.class) {
+            return SHOW_SORT_MODE;
+        } else if (itemClass == Tag.class) {
+            return TAG_SORT_MODE;
         } else {
             throw new RuntimeException(
                 "The Sort Handler cannot handle items of type " + itemClass.toString() + " until"

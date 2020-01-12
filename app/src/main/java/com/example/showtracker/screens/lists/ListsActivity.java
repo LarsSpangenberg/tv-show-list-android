@@ -65,6 +65,7 @@ public class ListsActivity extends BaseActivity
     public void onListClick(ListWithShows list) {
         selectionHandler.resetSelection();
         screensNavigator.toShowsList(list.getList());
+        finish();
     }
 
     @Override

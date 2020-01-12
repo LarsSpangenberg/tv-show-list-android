@@ -64,6 +64,10 @@ public class ToolbarViewMvc extends BaseObservableViewMvc<ToolbarViewMvc.MenuIte
         selectionHandler.setEditButton(getMenu().findItem(R.id.main_menu_rename_list));
     }
 
+    public MenuItem findMenuItem(int id) {
+        return getMenu().findItem(id);
+    }
+
     private Menu getMenu() {
         return toolbar.getMenu();
     }
