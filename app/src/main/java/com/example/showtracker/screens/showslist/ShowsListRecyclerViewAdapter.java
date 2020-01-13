@@ -1,7 +1,6 @@
 package com.example.showtracker.screens.showslist;
 
 import android.content.*;
-import android.util.*;
 import android.view.*;
 
 import androidx.annotation.*;
@@ -17,11 +16,10 @@ import java.util.*;
 
 import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 
-public class ShowsRecyclerViewAdapter
-    extends RecyclerView.Adapter<ShowsRecyclerViewAdapter.ShowsViewHolder>
+public class ShowsListRecyclerViewAdapter
+    extends RecyclerView.Adapter<ShowsListRecyclerViewAdapter.ShowsViewHolder>
     implements ItemMoveCallback.Listener, ShowsListItemViewMvc.Listener {
 
-    private static final String TAG = "ShowsRecyclerViewAdapte";
     private SharedPreferences prefs;
     private ListItemSelectionHandler selectionHandler;
     private ListItemSortHandler<ShowWithTags> sortHandler;
@@ -37,7 +35,7 @@ public class ShowsRecyclerViewAdapter
         void onShowDragAndDrop(Show toMove, Show target);
     }
 
-    public ShowsRecyclerViewAdapter(
+    public ShowsListRecyclerViewAdapter(
         SharedPreferences prefs,
         ListItemSelectionHandler selectionHandler,
         Listener listener,
@@ -53,7 +51,6 @@ public class ShowsRecyclerViewAdapter
     @NonNull
     @Override
     public ShowsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder: called");
         ShowsListItemViewMvc viewHolderViewMvc = viewMvcFactory.getShowsListItemViewMvc(parent);
         viewHolderViewMvc.registerListener(this);
         return new ShowsViewHolder(viewHolderViewMvc);
@@ -62,13 +59,11 @@ public class ShowsRecyclerViewAdapter
     @Override
     public void onBindViewHolder(@NonNull ShowsViewHolder holder, int position) {
         ShowWithTags current = shows.get(position);
-        Log.d(TAG, "onBindViewHolder: called");
         holder.viewMvc.bindShow(
             current.getShow(),
             position,
             tagsIdsToTagNameText(current.getTags())
         );
-
     }
 
     @Override
@@ -110,7 +105,6 @@ public class ShowsRecyclerViewAdapter
     public void bindShows(List<ShowWithTags> shows) {
         sortHandler.setItems(shows);
         this.shows = sortHandler.getSortedItems();
-        Log.d(TAG, "bindShows: " + this.shows);
         notifyDataSetChanged();
     }
 

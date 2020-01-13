@@ -7,7 +7,6 @@ import androidx.annotation.*;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.*;
 
-import com.example.showtracker.R;
 import com.example.showtracker.data.lists.entities.*;
 import com.example.showtracker.data.shows.entities.*;
 import com.example.showtracker.data.tags.entities.*;
@@ -29,7 +28,6 @@ import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*
 
 public class ShowsListActivity extends BaseActivity
     implements ShowsListViewMvc.Listener{
-    private static final String TAG = "ShowsListActivity";
 
     private ListEntity currentList;
     private List<Tag> allTags = new ArrayList<>();
@@ -45,7 +43,6 @@ public class ShowsListActivity extends BaseActivity
 
     public static void start(ListEntity list, Context context) {
         Intent intent = new Intent(context, ShowsListActivity.class);
-//        intent.putExtra(LIST_ID, list.getId());
         intent.putExtra(ListEntity.class.getSimpleName(), list);
         context.startActivity(intent);
     }
@@ -61,9 +58,9 @@ public class ShowsListActivity extends BaseActivity
         viewModelFactory.setId(currentList.getId());
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowsListViewModel.class);
 
-        viewMvc = viewMvcFactory.getShowsListViewMvc(currentList, filters, null);
+        viewMvc = viewMvcFactory.getShowsListViewMvc(currentList, null);
 
-        setContentView(R.layout.activity_shows_list);
+        setContentView(viewMvc.getRootView());
     }
 
     @Override
@@ -85,45 +82,6 @@ public class ShowsListActivity extends BaseActivity
         onBackPressed();
     }
 
-    //    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.shows_list_menu, menu);
-//        setDeleteButton(menu.findItem(R.id.shows_list_delete));
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//        int sortMode = prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM);
-//        menu.findItem(R.id.sl_menu_sort_by_name).setChecked(sortMode == SORT_BY_NAME);
-//        menu.findItem(R.id.sl_menu_sort_by_custom).setChecked(sortMode == SORT_BY_CUSTOM);
-//
-//        return super.onPrepareOptionsMenu(menu);
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        switch (id) {
-//            case R.id.shows_list_delete:
-//                deleteSelectedShows();
-//                return true;
-//            case R.id.sl_menu_sort_by_name:
-//                sortItems(SORT_BY_NAME);
-//                return true;
-//            case R.id.sl_menu_sort_by_custom:
-//                sortItems(SORT_BY_CUSTOM);
-//                return true;
-//            case R.id.sl_menu_filter_status:
-//                showStatusFilterDialog();
-//                return true;
-//            case R.id.sl_menu_filter_tag:
-//                showTagFilterDialog();
-//                return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @Override
     public void onShowClick(@NonNull Show show) {
@@ -195,8 +153,8 @@ public class ShowsListActivity extends BaseActivity
 
         for (int i = 0; i < itemCount; i++) {
             Tag tag = allTags.get(i);
-            tagFilterNames[i] = tag.toString();
-            checkedItems[i] = tagFilter.contains(tag.id);
+            tagFilterNames[i] = tag.getName();
+            checkedItems[i] = tagFilter.contains(tag.getId());
         }
 
         showFilterDialog(
@@ -272,6 +230,13 @@ public class ShowsListActivity extends BaseActivity
         return builder.toString();
     }
 
+    private void prepareUiData(List<ShowWithTags> shows, List<Tag> tags) {
+        viewMvc.bindShowsAndTags(shows, tags);
+        viewMvc.setStatusFilterReferenceText(getStatusFilterReferenceText());
+        viewMvc.setTagFilterReferenceText(getTagFilterReferenceText());
+        allTags = tags;
+    }
+
     private void registerViewModelObservers() {
         viewModel.getShowsListData().observe(
             this,
@@ -279,13 +244,7 @@ public class ShowsListActivity extends BaseActivity
                 @Override
                 public void onChanged(ShowsListData data) {
                     if (data != null) {
-//                        prepareUiData(data.shows, data.allTags);
-                        viewMvc.bindShowsAndTags(
-                            data.shows,
-                            data.allTags,
-                            getStatusFilterReferenceText(),
-                            getTagFilterReferenceText()
-                        );
+                        prepareUiData(data.shows, data.allTags);
                     }
                 }
             }

@@ -39,7 +39,6 @@ public class ViewMvcFactory {
 
     public ShowsListViewMvc getShowsListViewMvc(
         ListEntity currentList,
-        ShowsListFilters filters,
         @Nullable ViewGroup parent
     ) {
         return new ShowsListViewMvcImpl(
@@ -47,7 +46,6 @@ public class ViewMvcFactory {
             layoutInflater,
             prefs,
             selectionHandler,
-            filters,
             parent,
             this
         );

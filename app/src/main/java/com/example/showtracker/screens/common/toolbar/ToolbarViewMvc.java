@@ -56,12 +56,12 @@ public class ToolbarViewMvc extends BaseObservableViewMvc<ToolbarViewMvc.MenuIte
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
     }
 
-    public void enableDeleteButton() {
-        selectionHandler.enableDeleteButton(getMenu().findItem(R.id.main_menu_delete_selection));
+    public void enableDeleteButton(@IdRes int deleteButtonId) {
+        selectionHandler.enableDeleteButton(findMenuItem(deleteButtonId));
     }
 
-    public void enableEditButton() {
-        selectionHandler.setEditButton(getMenu().findItem(R.id.main_menu_rename_list));
+    public void enableEditButton(@IdRes int editButtonId) {
+        selectionHandler.setEditButton(findMenuItem(editButtonId));
     }
 
     public MenuItem findMenuItem(int id) {

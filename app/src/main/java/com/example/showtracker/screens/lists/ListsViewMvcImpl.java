@@ -62,8 +62,8 @@ public class ListsViewMvcImpl extends BaseObservableViewMvc<ListsViewMvc.Listene
         toolbarViewMvc.setTitle(getString(R.string.app_name));
         toolbarViewMvc.registerListener(this);
         toolbarViewMvc.inflateMenu(R.menu.lists_menu);
-        toolbarViewMvc.enableDeleteButton();
-        toolbarViewMvc.enableEditButton();
+        toolbarViewMvc.enableDeleteButton(R.id.main_menu_delete_selection);
+        toolbarViewMvc.enableEditButton(R.id.main_menu_rename_list);
     }
 
     @Override

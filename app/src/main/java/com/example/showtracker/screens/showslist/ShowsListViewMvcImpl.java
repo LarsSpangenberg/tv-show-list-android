@@ -1,7 +1,6 @@
 package com.example.showtracker.screens.showslist;
 
 import android.content.*;
-import android.util.*;
 import android.view.*;
 import android.widget.*;
 
@@ -19,38 +18,32 @@ import com.google.android.material.floatingactionbutton.*;
 
 import java.util.*;
 
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SHOW_SORT_MODE;
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_CUSTOM;
-import static com.example.showtracker.screens.common.utils.ListItemSortHandler.SORT_BY_NAME;
+import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 
 public class ShowsListViewMvcImpl extends BaseObservableViewMvc<ShowsListViewMvc.Listener>
-    implements ShowsRecyclerViewAdapter.Listener,
+    implements ShowsListRecyclerViewAdapter.Listener,
     ToolbarViewMvc.MenuItemClickListener,
     ToolbarViewMvc.NavigateUpClickListener,
     ShowsListViewMvc {
 
-    private static final String TAG = "ShowsListViewMvcImpl";
-    private final ShowsRecyclerViewAdapter adapter;
+    private final ShowsListRecyclerViewAdapter adapter;
     private final ToolbarViewMvc toolbarViewMvc;
     private ListEntity currentList;
     private SharedPreferences prefs;
-    private ShowsListFilters filters;
 
     public ShowsListViewMvcImpl(
         ListEntity currentList,
         LayoutInflater inflater,
         SharedPreferences prefs,
         ListItemSelectionHandler selectionHandler,
-        ShowsListFilters filters,
         ViewGroup parent,
         ViewMvcFactory viewMvcFactory
     ) {
         this.currentList = currentList;
         this.prefs = prefs;
-        this.filters = filters;
         setRootView(inflater.inflate(R.layout.activity_shows_list, parent, false));
 
-        adapter = new ShowsRecyclerViewAdapter(prefs, selectionHandler, this, viewMvcFactory);
+        adapter = new ShowsListRecyclerViewAdapter(prefs, selectionHandler, this, viewMvcFactory);
 
         RecyclerView recyclerView = findViewById(R.id.shows_list);
         recyclerView.setAdapter(adapter);
@@ -67,42 +60,14 @@ public class ShowsListViewMvcImpl extends BaseObservableViewMvc<ShowsListViewMvc
         initFab();
     }
 
-    private void initToolbar() {
-        toolbarViewMvc.setTitle(currentList.toString());
-        toolbarViewMvc.inflateMenu(R.menu.shows_list_menu);
-        toolbarViewMvc.registerListener(this);
-        toolbarViewMvc.enableUpButtonAndListen(this);
-        toolbarViewMvc.enableDeleteButton();
-
-        handleSortMenuCheckBox();
-    }
-
     @Override
-    public void bindShowsAndTags(
-        List<ShowWithTags> shows,
-        List<Tag> allTags,
-        String statusFilterText,
-        String tagFilterText
-    ) {
-        Log.d(TAG, "bindShowsAndTags: " + shows.toString());
+    public void bindShowsAndTags(List<ShowWithTags> shows, List<Tag> allTags) {
+        handleNoResultsMessage(shows);
+
         adapter.bindTags(allTags);
         adapter.bindShows(shows);
 
-        TextView noResultsMessage = findViewById(R.id.sl_empty_list_message);
-        if (shows.isEmpty()) {
-            noResultsMessage.setVisibility(View.VISIBLE);
-        } else {
-            noResultsMessage.setVisibility(View.GONE);
-        }
-//        adapter.bindShows(shows);
-//        adapter.bindTags(allTags);
-//        this.allTags = allTags;
-//        setFilterDisplays(allTags);
-//        invalidateOptionsMenu();
-        setStatusFilterReferenceText(statusFilterText);
-        setTagFilterReferenceText(tagFilterText);
-        handleSortMenuCheckBox();
-
+        handleSortMenuItemSelection();
     }
 
     @Override
@@ -155,47 +120,38 @@ public class ShowsListViewMvcImpl extends BaseObservableViewMvc<ShowsListViewMvc
         }
     }
 
+    @Override
+    public void setStatusFilterReferenceText(String statusFilters) {
+        TextView statusFilterDisplay = findViewById(R.id.sl_status_filter_display);
+        if (statusFilters.isEmpty()) {
+            statusFilterDisplay.setVisibility(View.GONE);
+        } else {
+            statusFilterDisplay.setVisibility(View.VISIBLE);
+            statusFilterDisplay.setText(statusFilters);
+        }
+    }
 
-//    private void setFilterDisplays(List<Tag> allTags) {
-//        // shows which filters have been selected at the bottom of the screen for the user's reference
-//
-//        List<String> tagIds = filters.getFilteredTagIds();
-//        List<Show.Status> statusFilters = filters.getStatusFilters();
-//        StringBuilder builder;
-//
-//        if (tagIds.isEmpty()) {
-//        } else {
-//            builder = new StringBuilder();
-//            boolean firstItem = true;
-//            builder.append("Tag Filters: ");
-//            for (Tag tag : allTags) {
-//                if (tagIds.contains(tag.id)) {
-//                    if (firstItem) {
-//                        firstItem = false;
-//                    } else {
-//                        builder.append(", ");
-//                    }
-//                    builder.append(tag.name);
-//                }
-//            }
-//
-//        }
-//
-//        if (statusFilters.isEmpty()) {
-//            statusFilterDisplay.setVisibility(View.GONE);
-//        } else {
-//            builder = new StringBuilder();
-//            builder.append("Status Filters: ");
-//            for (int i = 0; i < statusFilters.size(); i++) {
-//                if (i != 0) {
-//                    builder.append(", ");
-//                }
-//                builder.append(statusFilters.get(i).toString());
-//            }
-//
-//        }
-//
-//    }
+    @Override
+    public void setTagFilterReferenceText(String tagFilters) {
+        TextView tagFilterDisplay = findViewById(R.id.sl_tag_filter_display);
+        if (tagFilters.isEmpty()) {
+            tagFilterDisplay.setVisibility(View.GONE);
+        } else {
+            tagFilterDisplay.setVisibility(View.VISIBLE);
+            tagFilterDisplay.setText(tagFilters);
+        }
+    }
+
+    private void initToolbar() {
+        toolbarViewMvc.setTitle(currentList.toString());
+        toolbarViewMvc.inflateMenu(R.menu.shows_list_menu);
+        toolbarViewMvc.registerListener(this);
+        toolbarViewMvc.enableUpButtonAndListen(this);
+        toolbarViewMvc.enableDeleteButton(R.id.shows_list_delete);
+
+        handleSortMenuItemSelection();
+    }
+
     private void initFab() {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -208,33 +164,22 @@ public class ShowsListViewMvcImpl extends BaseObservableViewMvc<ShowsListViewMvc
         });
     }
 
-    private void handleSortMenuCheckBox() {
+    private void handleNoResultsMessage(List<ShowWithTags> shows) {
+        TextView noResultsMessage = findViewById(R.id.sl_empty_list_message);
+        if (shows.isEmpty()) {
+            noResultsMessage.setVisibility(View.VISIBLE);
+        } else {
+            noResultsMessage.setVisibility(View.GONE);
+        }
+    }
+
+    private void handleSortMenuItemSelection() {
         int sortMode = prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM);
         toolbarViewMvc
             .findMenuItem(R.id.sl_menu_sort_by_name)
-            .setChecked(sortMode == SORT_BY_NAME);
+            .setEnabled(sortMode != SORT_BY_NAME);
         toolbarViewMvc
             .findMenuItem(R.id.sl_menu_sort_by_custom)
-            .setChecked(sortMode == SORT_BY_CUSTOM);
-    }
-
-    private void setStatusFilterReferenceText(String statusFilters) {
-        TextView statusFilterDisplay = findViewById(R.id.sl_status_filter_display);
-        if (statusFilters.isEmpty()) {
-            statusFilterDisplay.setVisibility(View.GONE);
-        } else {
-            statusFilterDisplay.setVisibility(View.VISIBLE);
-            statusFilterDisplay.setText(statusFilters);
-        }
-    }
-
-    private void setTagFilterReferenceText(String tagFilters) {
-        TextView tagFilterDisplay = findViewById(R.id.sl_tag_filter_display);
-        if (tagFilters.isEmpty()) {
-            tagFilterDisplay.setVisibility(View.GONE);
-        } else {
-            tagFilterDisplay.setVisibility(View.VISIBLE);
-            tagFilterDisplay.setText(tagFilters);
-        }
+            .setEnabled(sortMode != SORT_BY_CUSTOM);
     }
 }

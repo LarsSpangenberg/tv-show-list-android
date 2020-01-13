@@ -17,11 +17,8 @@ public interface ShowsListViewMvc extends ObservableViewMvc<ShowsListViewMvc.Lis
         void onNavigationUpClick();
     }
 
-    void bindShowsAndTags(
-        List<ShowWithTags> shows,
-        List<Tag> allTags,
-        String statusFilterText,
-        String tagFilterText
-    );
+    void bindShowsAndTags(List<ShowWithTags> shows, List<Tag> allTags);
     void sortShows(int sortBy);
+    void setStatusFilterReferenceText(String statusFilters);
+    void setTagFilterReferenceText(String tagFilters);
 }
