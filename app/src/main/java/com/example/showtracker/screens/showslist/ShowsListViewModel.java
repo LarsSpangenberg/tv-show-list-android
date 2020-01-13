@@ -64,10 +64,6 @@ public class ShowsListViewModel extends ViewModel {
         return showsListData;
     }
 
-//    public List<Tag> getAllTags() {
-//        return this.allTags.getValue();
-//    }
-
     public void deleteShowsFromList(String listId, List<String> showIds) {
         showsRepository.deleteShowFromList(listId, showIds);
     }

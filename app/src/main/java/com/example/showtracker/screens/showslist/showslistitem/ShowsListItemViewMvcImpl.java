@@ -3,7 +3,6 @@ package com.example.showtracker.screens.showslist.showslistitem;
 import android.content.res.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
-import android.util.*;
 import android.view.*;
 import android.widget.*;
 
@@ -14,7 +13,6 @@ import com.example.showtracker.screens.common.views.*;
 
 public class ShowsListItemViewMvcImpl extends BaseObservableViewMvc<ShowsListItemViewMvc.Listener>
     implements ShowsListItemViewMvc {
-    private static final String TAG = "ShowsListItemViewMvcImp";
     private final TextView title;
     private final TextView season;
     private final TextView episode;
@@ -42,7 +40,6 @@ public class ShowsListItemViewMvcImpl extends BaseObservableViewMvc<ShowsListIte
     public void bindShow(final Show show, final int position, String tagText) {
         setSelected(show.getId());
 
-        Log.d(TAG, "bindShow: " + show.getTitle());
         title.setText(show.getTitle());
         season.setText(getString(R.string.sli_season, show.getSeason()));
         episode.setText(getString(R.string.sli_episode, show.getEpisode()));

@@ -13,12 +13,12 @@ public class ShowsListFilters {
     }
 
     public List<Show.Status> getStatusFilters() {
-        return this.statusFilters;
+        return statusFilters;
     }
 
     public List<Integer> getFilteredStatusCodes() {
         List<Integer> statusFilterCodes = new ArrayList<>();
-        for (Show.Status status : this.statusFilters) {
+        for (Show.Status status : statusFilters) {
             statusFilterCodes.add(status.getCode());
         }
         return statusFilterCodes;
@@ -26,17 +26,17 @@ public class ShowsListFilters {
 
     public void handleStatusFilter(Show.Status status) {
         if (statusFilters.contains(status)) {
-            this.statusFilters.remove(status);
+            statusFilters.remove(status);
         } else {
-            this.statusFilters.add(status);
+            statusFilters.add(status);
         }
     }
 
     public void handleTagFilter(String tagId) {
-        if (this.tagIds.contains(tagId)) {
-            this.tagIds.remove(tagId);
+        if (tagIds.contains(tagId)) {
+            tagIds.remove(tagId);
         } else {
-            this.tagIds.add(tagId);
+            tagIds.add(tagId);
         }
     }
 }
