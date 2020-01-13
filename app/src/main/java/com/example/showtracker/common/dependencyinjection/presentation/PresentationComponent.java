@@ -3,6 +3,7 @@ package com.example.showtracker.common.dependencyinjection.presentation;
 import com.example.showtracker.screens.common.viewmodel.*;
 import com.example.showtracker.screens.common.views.*;
 import com.example.showtracker.screens.lists.*;
+import com.example.showtracker.screens.showdetails.*;
 import com.example.showtracker.screens.showslist.*;
 
 import dagger.*;
@@ -15,4 +16,5 @@ public interface PresentationComponent {
 
     void inject(ListsActivity listsActivity);
     void inject(ShowsListActivity showsListActivity);
+    void inject(ShowDetailsActivity showDetailActivity);
 }

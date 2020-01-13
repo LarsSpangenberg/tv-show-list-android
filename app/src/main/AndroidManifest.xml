@@ -17,7 +17,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".screens.showdetails.ShowDetailActivity"
+            android:name=".screens.showdetails.ShowDetailsActivity"
             android:label="@string/title_activity_show_detail"
             android:parentActivityName=".screens.showslist.ShowsListActivity"
             android:theme="@style/AppTheme.NoActionBar"

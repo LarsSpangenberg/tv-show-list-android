@@ -146,7 +146,7 @@ public class ListsActivity extends BaseActivity
     private void showNoChangesMadeMessage() {
         Snackbar
             .make(
-                getWindow().getDecorView().getRootView(),
+                viewMvc.getRootView(),
                 "List name cannot be empty. No changes were made.",
                 Snackbar.LENGTH_LONG
             )

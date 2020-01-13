@@ -85,7 +85,7 @@ public class ShowsListActivity extends BaseActivity
 
     @Override
     public void onShowClick(@NonNull Show show) {
-        ShowDetailActivity.start(this, show.getId());
+        ShowDetailsActivity.start(this, show.getId());
     }
 
 
@@ -99,7 +99,7 @@ public class ShowsListActivity extends BaseActivity
 
     @Override
     public void onFabClick() {
-        Intent intent = new Intent(this, ShowDetailActivity.class);
+        Intent intent = new Intent(this, ShowDetailsActivity.class);
         intent.putExtra(LIST_ID, currentList.getId());
         startActivity(intent);
     }

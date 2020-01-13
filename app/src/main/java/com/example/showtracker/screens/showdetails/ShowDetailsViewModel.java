@@ -10,6 +10,7 @@ import com.example.showtracker.data.lists.entities.*;
 import com.example.showtracker.data.shows.*;
 import com.example.showtracker.data.shows.entities.*;
 import com.example.showtracker.data.tags.entities.*;
+import com.example.showtracker.screens.showdetails.dataholder.*;
 
 import java.util.*;
 
@@ -33,53 +34,45 @@ public class ShowDetailsViewModel extends ViewModel {
     }
 
     public MediatorLiveData<ShowDetailsData> getAllShowDetails() {
-        return this.showDetailsComplete;
+        return showDetailsComplete;
     }
 
     public void createNewShow(Show show, List<String> listIds, List<String> tagIds) {
-        this.showsRepository.newShow(show, listIds.get(0));
+        showsRepository.newShow(show, listIds.get(0));
         if (listIds.size() > 1) {
-            this.showsRepository.saveShowsLists(show.id, listIds);
+            showsRepository.saveShowsLists(show.id, listIds);
         }
         if (tagIds.size() > 0) {
-            this.showsRepository.saveShowsTags(show.id, tagIds);
+            showsRepository.saveShowsTags(show.id, tagIds);
         }
     }
 
     public void updateShow(Show show) {
-        this.showsRepository.updateShow(show);
+        showsRepository.updateShow(show);
     }
-
-//    public void updateShowsLists(String showId, String listId) {
-//        this.showsRepository.addShowToList(listId, showId);
-//    }
 
     public void saveShowsLists(String showId, List<String> listIds) {
-        this.showsRepository.saveShowsLists(showId, listIds);
+        showsRepository.saveShowsLists(showId, listIds);
     }
 
-//    public void deleteShowsFromList(Show show, String listId) {
-//        this.showsRepository.deleteShowsFromList(listId, show);
-//    }
-
     public void saveShowsTags(String showId, List<String> tagIds) {
-        this.showsRepository.saveShowsTags(showId, tagIds);
+        showsRepository.saveShowsTags(showId, tagIds);
     }
 
     public void setDetailsLiveData(@Nullable final String showId) {
         // if no showId was passed then a new show is being created, access to all tags and lists is
         // still needed for ShowDetailsActivity UI, use this method to reinitialize LiveData of
         // newly created Show with its id
-        this.showDetailsComplete = new MediatorLiveData<>();
+        showDetailsComplete = new MediatorLiveData<>();
         if (showId != null) {
-            this.showDetailsComplete.addSource(showDetails, new Observer<ShowDetails>() {
+            showDetailsComplete.addSource(showDetails, new Observer<ShowDetails>() {
                 @Override
                 public void onChanged(ShowDetails details) {
                     showDetailsComplete.setValue(combineDetails(showDetails, allLists, allTags));
                 }
             });
         }
-        this.showDetailsComplete.addSource(allLists, new Observer<List<ListEntity>>() {
+        showDetailsComplete.addSource(allLists, new Observer<List<ListEntity>>() {
             @Override
             public void onChanged(List<ListEntity> lists) {
                 if (showId != null) {
@@ -89,7 +82,7 @@ public class ShowDetailsViewModel extends ViewModel {
                 }
             }
         });
-        this.showDetailsComplete.addSource(allTags, new Observer<List<Tag>>() {
+        showDetailsComplete.addSource(allTags, new Observer<List<Tag>>() {
             @Override
             public void onChanged(List<Tag> tags) {
                 if (showId != null) {
@@ -127,17 +120,5 @@ public class ShowDetailsViewModel extends ViewModel {
             return new ShowDetailsData(al, at);
         }
         return null;
-    }
-
-    public class ShowDetailsData {
-        public ShowDetails show;
-        public List<Tag> allTags;
-        public List<ListEntity> allLists;
-
-        ShowDetailsData(List<ListEntity> allLists, List<Tag> allTags) {
-            this.show = null;
-            this.allLists = allLists;
-            this.allTags = allTags;
-        }
     }
 }

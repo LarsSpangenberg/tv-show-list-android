@@ -11,6 +11,7 @@ import com.example.showtracker.screens.common.toolbar.*;
 import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.screens.lists.*;
 import com.example.showtracker.screens.lists.listslistitem.*;
+import com.example.showtracker.screens.showdetails.*;
 import com.example.showtracker.screens.showslist.*;
 import com.example.showtracker.screens.showslist.showslistitem.*;
 
@@ -49,6 +50,10 @@ public class ViewMvcFactory {
             parent,
             this
         );
+    }
+
+    public ShowDetailsViewMvcImpl getShowDetailsViewMvc(@Nullable ViewGroup parent) {
+        return new ShowDetailsViewMvcImpl(layoutInflater, parent, this);
     }
 
     public ListsListItemViewMvc getListsListItemViewMvc(@Nullable ViewGroup parent) {

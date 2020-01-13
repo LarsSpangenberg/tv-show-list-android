@@ -18,7 +18,7 @@ public abstract class BaseViewMvc implements ViewMvc {
         this.rootView = rootView;
     }
 
-    protected  <T extends View> T findViewById(int id) {
+    protected  <T extends View> T findViewById(@IdRes int id) {
         return getRootView().findViewById(id);
     }
 
