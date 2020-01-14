@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
     android:orientation="vertical"
-    tools:context=".views.AddEditListActivity">
+    tools:context=".screens.common.activities.SimpleAddEditActivity">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
