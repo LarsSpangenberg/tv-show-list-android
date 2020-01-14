@@ -26,7 +26,7 @@
     <string name="sd_status_prompt">Status</string>
     <string name="sd_no_tags_message">You haven\'t created any tags yet</string>
     <string name="sd_default_number_value">1</string>
-    <string name="title_activity_tag">Tag Activity</string>
+    <string name="title_activity_tag">Tags</string>
     <string name="menu_tag_list">Edit Tags</string>
     <string name="tag_list_menu_delete">Delete Selection</string>
     <string name="addtag_name_hint">Tag Name</string>

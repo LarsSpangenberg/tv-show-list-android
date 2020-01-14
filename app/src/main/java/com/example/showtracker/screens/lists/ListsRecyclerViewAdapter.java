@@ -48,9 +48,9 @@ public class ListsRecyclerViewAdapter
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ListsListItemViewMvc viewHolderViewMvc = viewMvcFactory.getListsListItemViewMvc(parent);
-        viewHolderViewMvc.registerListener(this);
-        return new ViewHolder(viewHolderViewMvc);
+        ListsListItemViewMvc listItemViewMvc = viewMvcFactory.getListsListItemViewMvc(parent);
+        listItemViewMvc.registerListener(this);
+        return new ViewHolder(listItemViewMvc);
     }
 
     @Override

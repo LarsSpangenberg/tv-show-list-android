@@ -3,7 +3,6 @@ package com.example.showtracker.screens.showslist;
 import android.content.*;
 import android.os.*;
 
-import androidx.annotation.*;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.*;
 
@@ -12,17 +11,16 @@ import com.example.showtracker.data.shows.entities.*;
 import com.example.showtracker.data.tags.entities.*;
 import com.example.showtracker.screens.common.activities.*;
 import com.example.showtracker.screens.common.dialogs.*;
+import com.example.showtracker.screens.common.screensnavigator.*;
 import com.example.showtracker.screens.common.utils.*;
 import com.example.showtracker.screens.common.viewmodel.*;
 import com.example.showtracker.screens.common.views.*;
-import com.example.showtracker.screens.showdetails.*;
 import com.example.showtracker.screens.showslist.ShowsListViewModel.*;
 
 import java.util.*;
 
 import javax.inject.*;
 
-import static com.example.showtracker.data.lists.entities.ListEntity.*;
 import static com.example.showtracker.data.shows.entities.Show.*;
 import static com.example.showtracker.screens.common.utils.ListItemSortHandler.*;
 
@@ -33,6 +31,7 @@ public class ShowsListActivity extends BaseActivity
     private List<Tag> allTags = new ArrayList<>();
 
     @Inject SharedPreferences prefs;
+    @Inject ScreensNavigator screensNavigator;
     @Inject ShowsListFilters filters;
     @Inject ListItemSelectionHandler selectionHandler;
     @Inject ViewModelWithIdFactory viewModelFactory;
@@ -79,18 +78,18 @@ public class ShowsListActivity extends BaseActivity
 
     @Override
     public void onNavigationUpClick() {
-        onBackPressed();
+        screensNavigator.navigateUp();
     }
 
 
     @Override
-    public void onShowClick(@NonNull Show show) {
-        ShowDetailsActivity.start(this, show.getId());
+    public void onShowClick(Show show) {
+        screensNavigator.toEditShow(show.getId());
     }
 
 
     @Override
-    public void onShowDragAndDrop(@NonNull Show toMove, @NonNull Show target) {
+    public void onShowDragAndDrop(Show toMove, Show target) {
         int sortMode = prefs.getInt(SHOW_SORT_MODE, SORT_BY_CUSTOM);
         if (sortMode == SORT_BY_CUSTOM) {
             viewModel.moveShow(toMove, target);
@@ -99,9 +98,7 @@ public class ShowsListActivity extends BaseActivity
 
     @Override
     public void onFabClick() {
-        Intent intent = new Intent(this, ShowDetailsActivity.class);
-        intent.putExtra(LIST_ID, currentList.getId());
-        startActivity(intent);
+        screensNavigator.toNewShow();
     }
 
     @Override

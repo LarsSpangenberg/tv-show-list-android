@@ -5,6 +5,7 @@ import com.example.showtracker.screens.common.views.*;
 import com.example.showtracker.screens.lists.*;
 import com.example.showtracker.screens.showdetails.*;
 import com.example.showtracker.screens.showslist.*;
+import com.example.showtracker.screens.tags.*;
 
 import dagger.*;
 
@@ -17,4 +18,5 @@ public interface PresentationComponent {
     void inject(ListsActivity listsActivity);
     void inject(ShowsListActivity showsListActivity);
     void inject(ShowDetailsActivity showDetailActivity);
+    void inject(TagListActivity tagListActivity);
 }

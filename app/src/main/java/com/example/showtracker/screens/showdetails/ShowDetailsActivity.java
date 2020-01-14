@@ -10,6 +10,7 @@ import androidx.lifecycle.*;
 
 import com.example.showtracker.data.shows.entities.*;
 import com.example.showtracker.screens.common.activities.*;
+import com.example.showtracker.screens.common.screensnavigator.*;
 import com.example.showtracker.screens.common.viewmodel.*;
 import com.example.showtracker.screens.common.views.*;
 import com.example.showtracker.screens.showdetails.dataholder.*;
@@ -29,13 +30,21 @@ public class ShowDetailsActivity extends BaseActivity implements ShowDetailsView
 
     private boolean editMode = false;
 
+    @Inject ScreensNavigator screensNavigator;
     @Inject ViewModelWithIdFactory viewModelFactory;
     @Inject ViewMvcFactory viewMvcFactory;
 
     private ShowDetailsViewModel viewModel;
-    private ShowDetailsViewMvcImpl viewMvc;
+    private ShowDetailsViewMvc viewMvc;
+
+    public static void start(Context context) {
+        // create new show
+        Intent intent = new Intent(context, ShowDetailsActivity.class);
+        context.startActivity(intent);
+    }
 
     public static void start(Context context, String showId) {
+        // edit existing show
         Intent intent = new Intent(context, ShowDetailsActivity.class);
         intent.putExtra(SHOW_ID, showId);
         intent.setAction(Intent.ACTION_EDIT);
@@ -48,7 +57,6 @@ public class ShowDetailsActivity extends BaseActivity implements ShowDetailsView
         getPresentationComponent().inject(this);
 
         viewMvc = viewMvcFactory.getShowDetailsViewMvc(null);
-
         Intent intent = getIntent();
         String action = intent.getAction();
         if (action != null && action.equals(Intent.ACTION_EDIT)) {
@@ -56,11 +64,9 @@ public class ShowDetailsActivity extends BaseActivity implements ShowDetailsView
         } else {
             setUpNewShow(intent);
         }
-
         viewModel = ViewModelProviders
             .of(this, viewModelFactory)
             .get(ShowDetailsViewModel.class);
-
 
         setContentView(viewMvc.getRootView());
     }
@@ -98,9 +104,9 @@ public class ShowDetailsActivity extends BaseActivity implements ShowDetailsView
     @Override
     public void onBackPressed() {
         if (viewMvc.isTitleEditTextEmpty()) {
-            showNoTitleMessage();
+            showUnableToSaveMessage();
         } else {
-            super.onBackPressed();
+            screensNavigator.navigateUp();
         }
     }
 
@@ -157,7 +163,7 @@ public class ShowDetailsActivity extends BaseActivity implements ShowDetailsView
         }
     }
 
-    private void setShowDetails(ShowDetails showData) {
+    private void bindShowDetails(ShowDetails showData) {
         show = showData.show;
         showsTags = showData.tagIds;
         showsLists = showData.listIds;
@@ -165,7 +171,7 @@ public class ShowDetailsActivity extends BaseActivity implements ShowDetailsView
         viewMvc.bindShow(showData);
     }
 
-    private void showNoTitleMessage() {
+    private void showUnableToSaveMessage() {
         Snackbar snackbar = Snackbar.make(
             viewMvc.getRootView(),
             "No Title was entered.\nContinue without saving?",
@@ -187,7 +193,7 @@ public class ShowDetailsActivity extends BaseActivity implements ShowDetailsView
                 @Override
                 public void onChanged(ShowDetailsData details) {
                     if (details != null) {
-                        if (editMode) setShowDetails(details.show);
+                        if (editMode) bindShowDetails(details.show);
                         viewMvc.bindLists(details.allLists, showsLists);
                         viewMvc.bindTags(details.allTags, showsTags);
                     }

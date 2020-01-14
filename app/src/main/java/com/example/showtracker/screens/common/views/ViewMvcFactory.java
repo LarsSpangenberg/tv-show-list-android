@@ -14,6 +14,8 @@ import com.example.showtracker.screens.lists.listslistitem.*;
 import com.example.showtracker.screens.showdetails.*;
 import com.example.showtracker.screens.showslist.*;
 import com.example.showtracker.screens.showslist.showslistitem.*;
+import com.example.showtracker.screens.tags.*;
+import com.example.showtracker.screens.tags.taglistitem.*;
 
 public class ViewMvcFactory {
     private final LayoutInflater layoutInflater;
@@ -38,12 +40,9 @@ public class ViewMvcFactory {
         return new ListsViewMvcImpl(layoutInflater, prefs, selectionHandler, parent, this);
     }
 
-    public ShowsListViewMvc getShowsListViewMvc(
-        ListEntity currentList,
-        @Nullable ViewGroup parent
-    ) {
+    public ShowsListViewMvc getShowsListViewMvc(ListEntity current, @Nullable ViewGroup parent) {
         return new ShowsListViewMvcImpl(
-            currentList,
+            current,
             layoutInflater,
             prefs,
             selectionHandler,
@@ -52,8 +51,12 @@ public class ViewMvcFactory {
         );
     }
 
-    public ShowDetailsViewMvcImpl getShowDetailsViewMvc(@Nullable ViewGroup parent) {
+    public ShowDetailsViewMvc getShowDetailsViewMvc(@Nullable ViewGroup parent) {
         return new ShowDetailsViewMvcImpl(layoutInflater, parent, this);
+    }
+
+    public TagListViewMvc getTagListViewMvc(@Nullable ViewGroup parent) {
+        return new TagListViewMvcImpl(layoutInflater, prefs, selectionHandler, parent, this);
     }
 
     public ListsListItemViewMvc getListsListItemViewMvc(@Nullable ViewGroup parent) {
@@ -62,5 +65,9 @@ public class ViewMvcFactory {
 
     public ShowsListItemViewMvc getShowsListItemViewMvc(@Nullable ViewGroup parent) {
         return new ShowsListItemViewMvcImpl(layoutInflater, selectionHandler, parent);
+    }
+
+    public TagListItemViewMvc getTagListItemViewMvc(@Nullable ViewGroup parent) {
+        return new TagListItemViewMvcImpl(layoutInflater, selectionHandler, parent);
     }
 }

@@ -7,7 +7,7 @@ import com.example.showtracker.screens.common.views.*;
 
 import java.util.*;
 
-interface ShowDetailsViewMvc extends ObservableViewMvc<ShowDetailsViewMvc.Listener> {
+public interface ShowDetailsViewMvc extends ObservableViewMvc<ShowDetailsViewMvc.Listener> {
      interface Listener {
         void onListChipClick(String listId, boolean isChecked);
         void onTagChipClick(String tagId, boolean isChecked);

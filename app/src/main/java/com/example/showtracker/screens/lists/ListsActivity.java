@@ -65,7 +65,6 @@ public class ListsActivity extends BaseActivity
     public void onListClick(ListWithShows list) {
         selectionHandler.resetSelection();
         screensNavigator.toShowsList(list.getList());
-        finish();
     }
 
     @Override
@@ -89,7 +88,7 @@ public class ListsActivity extends BaseActivity
                     createNewList(data);
                 }
             } else if (resultCode == RESULT_EMPTY) {
-                showNoChangesMadeMessage();
+                showUnableToSaveMessage();
             }
             selectionHandler.resetSelection();
         }
@@ -143,7 +142,7 @@ public class ListsActivity extends BaseActivity
         viewModel.renameList(list);
     }
 
-    private void showNoChangesMadeMessage() {
+    private void showUnableToSaveMessage() {
         Snackbar
             .make(
                 viewMvc.getRootView(),
